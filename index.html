@@ -1,0 +1,1763 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>家宴点菜 · 想吃什么自己点</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=ZCOOL+XiaoWei&family=Noto+Sans+SC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap">
+<style>
+/* ===== 设计令牌：暖米白 / 木褐 / 柿红 / 橄榄 / 便签米 ===== */
+:root{
+  --plate:#FAF4E8;
+  --plate-deep:#F1E6D2;
+  --enamel:#6B4E3B;
+  --enamel-deep:#4B3427;
+  --enamel-soft:#EDE0CB;
+  --fire:#C0462C;
+  --celadon:#6E7C55;
+  --ink:#2B241C;
+  --ink-2:#5F5245;
+  --ink-3:#9B8B79;
+  --paper:#F4E7CB;
+  --paper-2:#E9D6AF;
+  --line:rgba(107,78,59,.15);
+  --shadow:0 18px 34px -24px rgba(75,52,39,.5);
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:
+    radial-gradient(900px 420px at 78% -8%, rgba(255,214,160,.34), rgba(255,214,160,0) 70%),
+    radial-gradient(700px 380px at 6% 12%, rgba(255,236,206,.5), rgba(255,236,206,0) 72%),
+    repeating-linear-gradient(0deg, rgba(107,78,59,.035) 0 1px, transparent 1px 94px),
+    repeating-linear-gradient(90deg, rgba(107,78,59,.035) 0 1px, transparent 1px 94px),
+    var(--plate);
+  color:var(--ink);
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(92px + env(safe-area-inset-bottom));
+}
+h1,h2,h3,h4{margin:0;font-weight:500}
+button{font:inherit;color:inherit;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+img{display:block}
+.serif{font-family:"ZCOOL XiaoWei","Noto Serif SC",serif}
+.brush{font-family:"Ma Shan Zheng","ZCOOL XiaoWei",cursive}
+
+/* ===== 顶栏 ===== */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 20px 12px;
+  background:linear-gradient(180deg, rgba(250,244,232,.97), rgba(250,244,232,.86));
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 32% 26%, #FFFDF8 0 42%, #FBEEDC 70%, #EDD9BC 100%);
+  border:1px solid rgba(107,78,59,.26);
+  display:grid;place-items:center;flex:none;
+  box-shadow:inset 0 -2px 4px rgba(107,78,59,.14);
+}
+.brand-mark svg{width:17px;height:17px;fill:var(--fire)}
+.brand-text h1{font-family:"ZCOOL XiaoWei",serif;font-size:19px;letter-spacing:.5px;line-height:1.2}
+.brand-text p{margin:1px 0 0;font-size:11.5px;color:var(--ink-3);letter-spacing:.3px}
+.topnav{display:flex;gap:4px}
+.topnav a{
+  text-decoration:none;color:var(--ink-2);font-size:13.5px;
+  padding:8px 13px;border-radius:999px;transition:.18s;
+}
+.topnav a:hover{background:rgba(27,92,126,.07);color:var(--ink)}
+.topnav a.on{background:var(--enamel);color:#fff}
+.badge{
+  display:inline-block;min-width:18px;height:18px;line-height:18px;padding:0 5px;
+  font-size:11px;text-align:center;border-radius:9px;background:var(--fire);color:#fff;margin-left:5px;
+}
+
+/* ===== 页面容器 ===== */
+.wrap{max-width:1080px;margin:0 auto;padding:22px 20px 0}
+.route{display:none}
+.route.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ===== 首页抬头 ===== */
+.lead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.lead h2{font-family:"ZCOOL XiaoWei",serif;font-size:26px;letter-spacing:.6px}
+.lead p{margin:4px 0 0;color:var(--ink-2);font-size:13px}
+.lead-note{
+  font-family:"Ma Shan Zheng",cursive;font-size:17px;color:var(--enamel);
+  border-bottom:2px solid rgba(201,67,42,.35);padding-bottom:1px;white-space:nowrap;
+}
+
+/* 搜索 + 分类 */
+.tools{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.search{
+  flex:1 1 220px;display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--line);border-radius:999px;padding:0 14px;height:42px;
+}
+.search svg{width:15px;height:15px;stroke:var(--ink-3);fill:none;flex:none}
+.search input{border:0;outline:0;background:transparent;height:100%;width:100%;font-size:14px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{
+  flex:none;padding:7px 15px;border-radius:999px;border:1px solid var(--line);
+  background:#fff;font-size:13.5px;color:var(--ink-2);transition:.16s;
+}
+.cat:hover{border-color:rgba(27,92,126,.35)}
+.cat.on{background:var(--enamel);border-color:var(--enamel);color:#fff}
+
+/* ===== 菜品卡：搪瓷盘呈盘 ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 14px}
+.dish{
+  display:flex;flex-direction:column;gap:9px;
+  background:none;border:0;padding:0;text-align:left;
+  transition:transform .2s ease;cursor:pointer;
+}
+.dish:hover .plate{transform:translateY(-3px);box-shadow:0 22px 30px -20px rgba(18,62,86,.7)}
+.plate{
+  position:relative;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 30% 24%, #FFFDF9 0 46%, #FDF2E2 66%, #F2E1C7 100%);
+  padding:9%;
+  display:grid;place-items:center;
+  box-shadow:0 0 0 1px rgba(107,78,59,.16), 0 16px 26px -20px rgba(75,52,39,.55), inset 0 -6px 12px rgba(107,78,59,.1);
+  transition:transform .22s ease, box-shadow .22s;
+  overflow:hidden;
+}
+.plate img{width:100%;height:100%;object-fit:cover;border-radius:50%;box-shadow:0 0 0 1px rgba(107,78,59,.12)}
+.plate::after{
+  content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 26% 16%, rgba(255,255,255,.55), rgba(255,255,255,0) 46%);
+}
+.plate .qty{
+  position:absolute;right:6%;bottom:6%;z-index:2;
+  min-width:26px;height:26px;border-radius:50%;background:var(--fire);color:#fff;
+  font-size:13px;display:grid;place-items:center;box-shadow:0 4px 10px -4px rgba(201,67,42,.7);
+}
+.dish-name{font-family:"ZCOOL XiaoWei",serif;font-size:16.5px;line-height:1.35;letter-spacing:.4px}
+.dish-meta{display:flex;align-items:center;gap:6px;color:var(--ink-3);font-size:11.5px;flex-wrap:wrap}
+.dot{width:3px;height:3px;border-radius:50%;background:var(--ink-3)}
+.spicy-fire{display:inline-flex;align-items:center;gap:2px;color:var(--fire)}
+.spicy-fire svg{width:11px;height:11px;fill:currentColor}
+.tag-src{
+  display:inline-block;font-size:11px;padding:1px 7px;border-radius:4px;
+  color:var(--enamel);background:rgba(27,92,126,.08);letter-spacing:.2px;
+}
+
+/* ===== 抽屉式详情（移动优先） ===== */
+.sheet{
+  max-width:720px;margin:0 auto;background:#fff;border-radius:20px;
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.sheet-hero{
+  display:flex;gap:16px;align-items:center;padding:20px 20px 16px;
+  background:linear-gradient(160deg, #FFFBF3, #FBF0DF);
+  border-bottom:1px solid var(--line);
+}
+.sheet-hero .plate{width:118px;flex:none;padding:8%}
+.sheet-hero h2{font-family:"ZCOOL XiaoWei",serif;font-size:24px;line-height:1.3}
+.sheet-hero .sub{margin-top:6px;color:var(--ink-2);font-size:12.5px;line-height:1.55}
+.receipt{
+  margin:16px 0;background:var(--paper);
+  background-image:linear-gradient(90deg, rgba(255,255,255,.4), rgba(255,255,255,0) 30%);
+  border:1px solid rgba(120,95,45,.2);border-radius:6px;
+  padding:14px 16px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);
+}
+.receipt-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;text-align:center}
+.receipt-3 > div + div{border-left:1px dashed rgba(120,95,45,.3)}
+.receipt-3 .k{font-size:10.5px;color:#7A653F;letter-spacing:.6px}
+.receipt-3 .v{font-size:13px;color:#33290F;margin-top:2px;line-height:1.45}
+.section-t{display:flex;align-items:center;gap:9px;margin:20px 0 10px;font-size:13px;color:var(--enamel);letter-spacing:.6px}
+.section-t::after{content:"";flex:1;height:1px;background:var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:12.5px;padding:5px 10px;border-radius:999px;background:#F4F6F6;border:1px solid rgba(27,92,126,.1);color:#3C4A4E}
+.chip.sea{background:#FBF3EA;border-color:rgba(160,105,50,.18);color:#7A5320}
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px;counter-reset:s}
+.steps li{display:flex;gap:11px;font-size:13.8px;line-height:1.7;color:#33302B}
+.steps li::before{
+  counter-increment:s;content:counter(s);
+  flex:none;width:22px;height:22px;border-radius:50%;
+  background:var(--enamel);color:#fff;font-size:12px;
+  display:grid;place-items:center;margin-top:2px;
+}
+.pad{padding:0 20px 20px}
+
+/* 辣度 / 备注 */
+.opt-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.opt-label{font-size:13px;color:var(--ink-2);flex:none}
+.seg{display:flex;background:#F1F4F4;border-radius:999px;padding:3px;gap:3px}
+.seg button{
+  border:0;background:transparent;padding:7px 16px;border-radius:999px;font-size:13.5px;color:var(--ink-2);
+  min-height:36px;transition:.16s;
+}
+.seg button.on{background:#fff;color:var(--enamel);box-shadow:0 2px 8px -3px rgba(18,62,86,.4);font-weight:500}
+.seg button.on[data-fire="1"]{color:var(--fire)}
+textarea.note{
+  width:100%;min-height:70px;border:1px solid var(--line);border-radius:12px;
+  background:#FCFCFA;padding:11px 13px;font-size:13.5px;resize:vertical;outline:0;
+}
+textarea.note:focus{border-color:rgba(27,92,126,.4);background:#fff}
+
+/* 底部动作条 */
+.actionbar{
+  position:sticky;bottom:0;display:flex;gap:10px;align-items:center;
+  padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg, rgba(255,255,255,.98), rgba(255,255,255,.9));
+  border-top:1px solid var(--line);backdrop-filter:blur(8px);
+}
+.btn{
+  border:0;border-radius:12px;padding:0 20px;height:46px;font-size:14.5px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.16s;
+}
+.btn-primary{background:var(--fire);color:#fff;box-shadow:0 10px 20px -14px rgba(201,67,42,.9)}
+.btn-primary:hover{background:#B93A22}
+.btn-primary:disabled{background:#D9D3CB;color:#F7F5F1;box-shadow:none;cursor:not-allowed}
+.btn-enamel{background:var(--enamel);color:#fff}
+.btn-enamel:hover{background:var(--enamel-deep)}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink-2)}
+.btn-ghost:hover{border-color:rgba(27,92,126,.4);color:var(--ink)}
+.btn-sm{height:38px;padding:0 14px;font-size:13px;border-radius:10px}
+.grow{flex:1}
+
+/* ===== 购物车 / 下单 ===== */
+.page-h{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.back{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;flex:none;
+}
+.back svg{width:16px;height:16px;stroke:var(--ink);fill:none}
+.page-h h2{font-family:"ZCOOL XiaoWei",serif;font-size:22px}
+.cart-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.cart-item{
+  display:flex;gap:12px;align-items:center;padding:12px;background:#fff;border-radius:14px;
+  border:1px solid var(--line);
+}
+.cart-item .plate{width:58px;flex:none;padding:3px}
+.cart-item .info{flex:1;min-width:0}
+.cart-item h4{font-family:"ZCOOL XiaoWei",serif;font-size:15.5px;font-weight:400}
+.cart-item .meta{font-size:11.5px;color:var(--ink-3);margin-top:2px;word-break:break-all}
+.cart-item .meta b{color:var(--fire);font-weight:400}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
+.stepper button{width:32px;height:32px;border:0;background:#F7F8F7;font-size:16px;line-height:1}
+.stepper span{min-width:28px;text-align:center;font-size:13.5px}
+.empty{
+  text-align:center;padding:56px 20px;color:var(--ink-3);
+  border:1px dashed rgba(27,92,126,.22);border-radius:16px;background:rgba(255,255,255,.6);
+}
+.empty h3{font-family:"ZCOOL XiaoWei",serif;font-size:18px;color:var(--ink-2);margin-bottom:8px}
+.form-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:12.5px;color:var(--ink-2)}
+.field input,.field select{
+  height:42px;border:1px solid var(--line);border-radius:10px;background:#FCFCFA;padding:0 12px;outline:0;
+}
+.field input:focus,.field select:focus{border-color:rgba(27,92,126,.4);background:#fff}
+.timechips{display:flex;gap:8px;flex-wrap:wrap}
+.timechips button{
+  padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#FCFCFA;font-size:13px;color:var(--ink-2);
+  min-height:38px;
+}
+.timechips button.on{border-color:var(--enamel);background:rgba(27,92,126,.08);color:var(--enamel)}
+
+/* ===== 小票 ===== */
+.ticket-wrap{max-width:440px;margin:0 auto}
+.ticket{
+  background:var(--paper);position:relative;border-radius:4px;padding:26px 24px 30px;
+  box-shadow:0 24px 44px -30px rgba(90,70,30,.8);
+  background-image:
+    radial-gradient(circle at 10% 6%, rgba(255,255,255,.5), rgba(255,255,255,0) 42%),
+    repeating-linear-gradient(180deg, rgba(120,95,45,.055) 0 2px, transparent 2px 7px);
+}
+.ticket::before,.ticket::after{
+  content:"";position:absolute;left:0;right:0;height:10px;
+  background:radial-gradient(circle at 6px -2px, transparent 6px, var(--plate) 6.5px);
+  background-size:12px 12px;
+}
+.ticket::before{top:-9px}
+.ticket::after{bottom:-9px;transform:rotate(180deg)}
+.t-head{text-align:center;padding-bottom:14px;border-bottom:2px solid rgba(90,70,30,.35)}
+.t-head .stamp{font-family:"Ma Shan Zheng",cursive;font-size:26px;color:#8A3A20;letter-spacing:3px}
+.t-head .num{font-size:11px;color:#7A653F;letter-spacing:2px;margin-top:4px}
+.t-body{padding-top:14px;font-size:13.5px;color:#3B3016}
+.t-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0}
+.t-row .n{font-family:"ZCOOL XiaoWei",serif;font-size:15px;color:#2C2410}
+.t-row .q{font-size:12px;color:#7A653F}
+.t-sep{height:1px;border-top:1px dashed rgba(90,70,30,.35);margin:10px 0}
+.t-note{font-size:12.5px;color:#5C4A24;line-height:1.7}
+.t-foot{display:flex;justify-content:space-between;font-size:11.5px;color:#7A653F;margin-top:14px;border-top:1px dashed rgba(90,70,30,.35);padding-top:10px}
+.push-state{margin-top:12px;font-size:12px;color:#7A653F;line-height:1.6;word-break:break-all}
+
+/* 订单记录 */
+.order-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;
+}
+.order-card .h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.order-card .h strong{font-family:"ZCOOL XiaoWei",serif;font-weight:400;font-size:15.5px}
+.order-card .h time{font-size:11.5px;color:var(--ink-3)}
+.order-card p{margin:6px 0 0;font-size:13px;color:var(--ink-2);line-height:1.7}
+
+/* 设置 */
+.hint{font-size:12.5px;color:var(--ink-3);line-height:1.75}
+.hint b{color:var(--ink-2);font-weight:500}
+.steps-mini{margin:10px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink-2);line-height:1.9}
+.steps-mini li::marker{color:var(--enamel)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* 浮动购物车条 */
+.fabbar{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));
+  width:min(680px, calc(100% - 32px));z-index:40;
+  display:none;align-items:center;gap:12px;
+  background:var(--enamel-deep);color:#fff;border-radius:999px;
+  padding:10px 12px 10px 20px;box-shadow:0 18px 34px -18px rgba(18,62,86,.9);
+}
+.fabbar.on{display:flex;animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+.fabbar .sum{flex:1;font-size:13.5px;letter-spacing:.3px}
+.fabbar .sum em{font-style:normal;color:#FFD9A8;margin-left:4px}
+.fabbar button{border:0;background:#fff;color:var(--enamel-deep);border-radius:999px;height:40px;padding:0 20px;font-size:13.5px}
+
+/* 底部标签栏（移动端） */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:45;
+  display:flex;justify-content:space-around;align-items:center;
+  background:rgba(252,251,248,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+}
+.tabbar a{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  text-decoration:none;color:var(--ink-3);font-size:11px;padding:4px 14px;border-radius:12px;position:relative;
+  min-width:64px;
+}
+.tabbar a svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.tabbar a.on{color:var(--enamel)}
+.tabbar a .badge{position:absolute;top:0;right:8px;margin:0}
+.badge-new{background:var(--olive,#6E7C55)}
+
+/* ===== 暖色层：把冷白统一成暖米白 ===== */
+.search,.cat,.back,.cart-item,.form-card,.order-card,.btn-ghost{background:#FFFCF5}
+.chip{background:#FBF3E4;border-color:rgba(107,78,59,.13);color:#5A4838}
+.chip.sea{background:#F7EBD8;border-color:rgba(160,105,50,.2);color:#7A5320}
+.seg{background:#F5EBD9}
+.seg button.on{background:#FFFCF5;color:var(--enamel)}
+.empty{background:rgba(255,250,242,.72);border-color:rgba(107,78,59,.22);color:var(--ink-3)}
+.actionbar{background:linear-gradient(0deg, rgba(255,251,244,.99), rgba(255,251,244,.9));border-top-color:var(--line)}
+.tabbar{background:rgba(253,249,242,.97)}
+textarea.note,.field input,.field select,.timechips button{background:#FFFDF8}
+.stepper button{background:#FAF4E8}
+.toast{background:rgba(43,36,28,.93)}
+.dish{
+  padding:10px 10px 14px;border-radius:18px;background:#FFFCF5;
+  border:1px solid rgba(107,78,59,.09);
+  box-shadow:0 12px 24px -20px rgba(75,52,39,.5);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.dish:hover{transform:translateY(-2px);box-shadow:0 18px 30px -22px rgba(75,52,39,.65)}
+.dish .plate{box-shadow:0 0 0 1px rgba(107,78,59,.1), inset 0 -6px 12px rgba(107,78,59,.08)}
+.dish-name{padding:0 2px}
+.cat:hover{border-color:rgba(107,78,59,.4)}
+.search{border-color:rgba(107,78,59,.2)}
+.lead .hello{font-family:"Ma Shan Zheng",cursive;color:var(--fire);font-size:16px;letter-spacing:2px;margin:0 0 2px}
+.lead h2{color:var(--ink)}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translate(-50%,10px);
+  background:rgba(34,31,27,.92);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;
+  opacity:0;pointer-events:none;transition:.24s;z-index:60;max-width:86vw;text-align:center;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 破折分隔手写注 */
+.footnote{
+  margin:34px 0 20px;text-align:center;font-size:11.5px;color:var(--ink-3);line-height:1.9;
+}
+.footnote .brush{display:block;font-size:16px;color:var(--enamel);margin-bottom:6px}
+
+@media (min-width:860px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:26px 18px}
+  .wrap{padding:26px 24px 0}
+  .sheet-hero{padding:24px}
+  .sheet-hero .plate{width:150px}
+  body{padding-bottom:40px}
+  .tabbar{display:none}
+  .fabbar{bottom:24px}
+  .topnav{display:flex}
+}
+@media (max-width:859px){
+  .topnav{display:none}
+  .brand-text h1{font-size:17px}
+  .wrap{padding:16px 16px 0}
+  .lead h2{font-size:22px}
+  .lead-note{font-size:15px}
+  .sheet{border-radius:0 0 20px 20px}
+  .sheet-hero{flex-direction:row;align-items:flex-start;padding:18px 16px 14px;gap:14px}
+  .sheet-hero .plate{width:96px}
+  .sheet-hero h2{font-size:20px}
+  .pad{padding:0 16px 16px}
+  .actionbar{padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+  .grid{grid-template-columns:repeat(2,1fr);gap:20px 12px}
+  .row2{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶栏 ===== -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 3.2a5.8 5.8 0 1 1 0 11.6 5.8 5.8 0 0 1 0-11.6Z"/></svg>
+    </div>
+    <div class="brand-text">
+      <h1>家宴点菜</h1>
+      <p>想吃什么，自己勾</p>
+    </div>
+  </div>
+  <nav class="topnav" id="topnav"></nav>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- ===== 视图：菜单 ===== -->
+    <section class="route" data-route="home" id="view-home">
+      <div class="lead">
+        <div>
+          <p class="hello" id="lead-hello">晚上好</p>
+          <h2>今天这顿，你点</h2>
+          <p id="lead-sub">今天准备了 60 道菜，慢慢挑</p>
+        </div>
+        <div class="lead-note">想吃什么就说，灶上给你留着火</div>
+      </div>
+      <div class="tools">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+          <input id="q" type="search" placeholder="搜菜名或食材，比如“牛肉”“茄子”" autocomplete="off">
+        </div>
+      </div>
+      <div class="cats" id="cats"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- ===== 视图：菜品详情 ===== -->
+    <section class="route" data-route="dish" id="view-dish"></section>
+
+    <!-- ===== 视图：购物车 / 下单 ===== -->
+    <section class="route" data-route="cart" id="view-cart"></section>
+
+    <!-- ===== 视图：订单记录 ===== -->
+    <section class="route" data-route="orders" id="view-orders"></section>
+
+    <!-- ===== 视图：设置 ===== -->
+    <section class="route" data-route="settings" id="view-settings"></section>
+
+    <!-- ===== 视图：下单成功小票 ===== -->
+    <section class="route" data-route="ticket" id="view-ticket"></section>
+  </div>
+</main>
+
+<!-- 浮动购物车条 -->
+<div class="fabbar" id="fabbar">
+  <div class="sum" id="fab-sum"></div>
+  <button id="fab-go">去下单</button>
+</div>
+
+<!-- 移动端标签栏 -->
+<nav class="tabbar" id="tabbar"></nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   数据：菜品
+   字段：id 名称 分类 参考 时长 难度 辣(1辣/0不辣) 锅具 火候
+        主料 ing[] 调料 sea[] 步骤 steps[] 简介 intro 图片 img
+   ========================================================= */
+var DISHES = [
+{id:"d01",n:"蒜泥拍黄瓜",cat:"凉菜",src:"家常必点",t:"10 分钟",lv:"快手",sp:0,
+ pot:"案板 + 拌菜盆 + 小奶锅",fire:"泼油时油温八成热（冒青烟），其余不用火",
+ ing:["黄瓜 2 根","蒜 4 瓣","干辣椒 2 个"],
+ sea:["香醋 2 勺","生抽 1 勺","盐 2g","白糖 3g","香油 1 勺"],
+ steps:["黄瓜洗净拍裂再切段——拍过的断面毛糙，比刀切的更吃味。撒 2g 盐抓匀静置 5 分钟，把杀出的水倒掉。","蒜拍碎剁末，干辣椒剪成圈。","小锅烧一勺油到冒烟，直接泼在蒜末辣椒上，激出香味。","加香醋、生抽、糖、香油拌匀，浇在黄瓜上，冷藏 10 分钟更入味。"],
+ intro:"饭前先上桌的那一盘，解腻、开胃，切配到上桌不到十分钟。",img:"https://aka.doubaocdn.com/s/iSULXHhBdg"},
+
+{id:"d03",n:"口水鸡",cat:"凉菜",src:"隋坡 · 川味",t:"50 分钟",lv:"中等",sp:1,
+ pot:"汤锅 + 冰水盆",fire:"水面刚好不翻滚的小火浸煮 12 分钟",
+ ing:["鸡腿 2 只","黄瓜 1 根","花生碎 30g","白芝麻 10g","葱姜"],
+ sea:["红油 3 勺","生抽 2 勺","香醋 1 勺","糖 1 勺","花椒粉 1g","蒜末 姜末 各 1 勺","香油 1 勺"],
+ steps:["鸡腿冷水下锅，加葱姜料酒，水微沸后转小火浸煮 12 分钟，保持水面只冒小泡不翻滚。","捞出立刻进冰水浸 10 分钟，鸡皮才会紧实脆爽；斩成宽条。","黄瓜切片垫底，鸡块皮朝上码好。","红油、生抽、醋、糖、花椒粉、蒜姜末调匀，浇满鸡块，撒芝麻花生碎和葱花。"],
+ intro:"冷盘里的硬菜，红油要清亮，鸡皮要弹。冰水这一步别省。",img:"https://aka.doubaocdn.com/s/wlBqT3E3F8"},
+
+{id:"d05",n:"红烧肉",cat:"猪肉",src:"老饭骨 · 京味",t:"90 分钟",lv:"有点耐心",sp:0,
+ pot:"铁锅（煸肉炒糖色）+ 砂锅（焖）",fire:"糖色小火；焖制用最小火，汤面只冒小泡 70 分钟",
+ ing:["带皮五花肉 600g（切 3cm 方块）","葱段 姜片","八角 2 个","桂皮 1 段"],
+ sea:["黄酒 150ml","生抽 3 勺","老抽 半勺","冰糖 30g","盐 2g"],
+ steps:["五花肉切 3cm 方块，冷锅冷油下锅小火煸到四面微黄，把多余油逼出来。","下冰糖小火炒成枣红色，肉块翻匀上色。糖色发黑就苦了，宁可浅一点。","加葱姜、八角、桂皮，黄酒一次加足，再加生抽老抽，大火烧开。","转入砂锅最小火加盖焖 70 分钟，中途别翻动，让肉自己安静下来。","开盖大火收汁 5 分钟，收到浓稠挂勺，撒葱花上桌。"],
+ intro:"肥而不腻的诀窍不在炖，而在前面那一步把油煸出去。",img:"https://aka.doubaocdn.com/s/v0oesoEVx7"},
+
+{id:"d07",n:"鱼香肉丝",cat:"猪肉",src:"隋坡 · 川味",t:"25 分钟",lv:"中等",sp:1,
+ pot:"炒锅",fire:"全程大火快炒，滑肉 20 秒，收汁 15 秒",
+ ing:["猪里脊 250g","泡发木耳 50g","冬笋或莴笋丝 80g","胡萝卜丝 少许","葱姜蒜"],
+ sea:["泡椒末 1 勺","豆瓣 半勺","醋 2 勺","糖 2 勺","生抽 1 勺","淀粉 料酒 适量"],
+ steps:["里脊顺纹切丝，加盐、料酒、蛋清、淀粉抓匀腌 10 分钟，最后封一勺油防粘。","醋、糖、生抽、淀粉加水调成鱼香汁——醋糖大致 1:1，尝一口是荔枝味就对了。","热锅凉油，肉丝下锅滑散至变白，立刻盛出。","底油小火炒香泡椒、豆瓣、姜蒜，下配菜丝炒断生，倒回肉丝，淋鱼香汁大火收亮，撒葱花。"],
+ intro:"鱼香没有鱼，靠的是泡椒的酸香加糖醋的平衡，比例乱了就只剩酸。",img:"https://aka.doubaocdn.com/s/uVeaxssryq"},
+
+{id:"d08",n:"糖醋里脊",cat:"猪肉",src:"老饭骨 · 京味",t:"35 分钟",lv:"中等",sp:0,
+ pot:"深锅（炸）+ 炒锅（裹汁）",fire:"五成油温初炸，六成复炸 20 秒；糖醋汁中火熬到大泡",
+ ing:["猪里脊 300g","鸡蛋 1 个","淀粉 面粉","白芝麻"],
+ sea:["番茄酱 3 勺","糖 3 勺","醋 2 勺","盐 料酒 适量"],
+ steps:["里脊切条，加盐料酒腌 10 分钟；淀粉面粉 1:1 加蛋和水调成厚糊，能挂住筷子。","油温五成热（筷子插入冒小泡）下锅炸定型捞出，升高油温复炸 20 秒至金黄酥脆。","锅留底油，下番茄酱、糖、醋、少许水，中火熬到起大泡、微微变稠。","倒入里脊快速翻匀裹汁，撒芝麻立刻出锅——慢一步就回软。"],
+ intro:"外壳要响，糖醋要挂得住。复炸和快裹这两步，是外面餐馆的窍门。",img:"https://aka.doubaocdn.com/s/4OPo3UFGK6"},
+
+{id:"d09",n:"京酱肉丝",cat:"猪肉",src:"老饭骨 · 京味",t:"25 分钟",lv:"中等",sp:0,
+ pot:"炒锅",fire:"滑肉大火 20 秒；炒酱必须中小火，酱起泡发亮即好",
+ ing:["猪里脊 300g","葱白 2 根","豆腐皮或薄饼","黄瓜条"],
+ sea:["甜面酱 2 勺","黄豆酱 半勺","糖 1 勺","料酒 淀粉 蛋清"],
+ steps:["里脊切细丝，加盐、料酒、蛋清、淀粉上浆 10 分钟。","热锅滑油，肉丝下锅快速滑散至变白盛出。","中小火下甜面酱、黄豆酱、糖，加两勺水炒到酱汁冒泡、油亮——火大就发苦。","倒回肉丝翻匀裹酱，铺在葱白丝上，配薄饼卷黄瓜条吃。"],
+ intro:"卷着吃的一道菜，酱要炒透才香，葱丝切得越细越像样。",img:"https://aka.doubaocdn.com/s/hGDvCuZp66"},
+
+{id:"d11",n:"蒜香排骨",cat:"猪肉",src:"家常硬菜",t:"45 分钟",lv:"中等",sp:0,
+ pot:"平底锅或厚底炒锅",fire:"中小火两面各煎 4 分钟；炒蒜末用小火",
+ ing:["肋排 500g","蒜 2 头","小米椒 2 个","葱花"],
+ sea:["生抽 2 勺","蚝油 1 勺","糖 1 勺","料酒 1 勺","白胡椒 淀粉"],
+ steps:["排骨斩 5cm 段，冷水泡 30 分钟去血水，沥干。","加一半蒜蓉、生抽、蚝油、糖、料酒、胡椒、淀粉抓匀，腌 30 分钟。","平底锅少油，排骨中小火两面各煎 4 分钟至金黄。","下剩余蒜末小火炒香，加两勺水加盖焖 5 分钟收干，撒葱花和小米椒。"],
+ intro:"蒜分两次用：一半腌进去，一半最后炒香，层次才出来。",img:"https://aka.doubaocdn.com/s/45iXm0rcaQ"},
+
+{id:"d12",n:"水煮牛肉",cat:"牛羊",src:"隋坡 · 川味",t:"40 分钟",lv:"中等",sp:1,
+ pot:"炒锅 + 深碗",fire:"牛肉中火只煮 40 秒；最后泼 180℃ 热油",
+ ing:["牛里脊 400g","黄豆芽 200g","莴笋片 100g","蒜末"],
+ sea:["豆瓣 2 勺","干辣椒 15g","花椒 5g","蛋清 淀粉","生抽 盐 料酒"],
+ steps:["牛肉逆纹切大薄片，加盐、少许水、蛋清、淀粉抓至发黏，腌 15 分钟。","豆芽和莴笋焯熟，垫在碗底。","小火炒豆瓣出红油，加水煮开调味；牛肉片分散下锅，中火 40 秒变白就连汤倒进碗里。","面上铺干辣椒段、花椒、蒜末，泼一勺烧到冒烟的热油，滋啦一声香气才出来。"],
+ intro:"嫩不嫩全看那 40 秒；煮久了就是牛肉干。",img:"https://aka.doubaocdn.com/s/dhNf9TvUQ5"},
+
+{id:"d13",n:"土豆炖牛腩",cat:"牛羊",src:"家常炖菜",t:"100 分钟",lv:"费时间",sp:0,
+ pot:"炒锅 + 砂锅",fire:"大火烧开转砂锅最小火炖 60 分钟，下土豆再炖 25 分钟",
+ ing:["牛腩 600g","土豆 2 个","胡萝卜 1 根","番茄 1 个","葱姜 八角"],
+ sea:["生抽 3 勺","老抽 半勺","料酒 2 勺","冰糖 10g","盐 适量"],
+ steps:["牛腩切 4cm 块，冷水下锅焯水去沫，捞出用温水冲净。","少油炒香葱姜八角，下牛腩煸到表面微焦，加料酒、生抽老抽、冰糖。","加热水没过肉，大火烧开后转砂锅最小火炖 60 分钟。","下土豆胡萝卜块再炖 25 分钟，加盐调味，开盖略收汁。"],
+ intro:"汤汁拌饭是主角。土豆后放，不然炖化了没口感。",img:"https://aka.doubaocdn.com/s/8ALnVjuViT"},
+
+{id:"d14",n:"孜然羊肉",cat:"牛羊",src:"家常爆炒",t:"25 分钟",lv:"快手",sp:1,
+ pot:"炒锅（要烧到冒烟）",fire:"全程大火，羊肉下锅 30 秒定型，孜然最后 30 秒",
+ ing:["羊后腿肉 400g","洋葱 半个","香菜 1 把"],
+ sea:["孜然粒 1 勺","孜然粉 1 勺","辣椒面 1 勺","生抽 1 勺","盐 料酒 淀粉"],
+ steps:["羊肉逆纹切薄片，加料酒、生抽、少许淀粉抓匀腌 10 分钟。","锅烧到微微冒烟，多放油，羊肉大火爆炒至变色出水。","下洋葱丝炒软，撒孜然粒、辣椒面、盐，大火再炒 30 秒。","关火撒孜然粉和香菜段，趁热上桌。"],
+ intro:"孜然分两次：粒在锅里炒香，粉出锅前撒，香味才不散。",img:"https://aka.doubaocdn.com/s/65RaSVoIH4"},
+
+{id:"d15",n:"黄焖鸡",cat:"鸡鸭",src:"家常焖菜",t:"45 分钟",lv:"中等",sp:0,
+ pot:"炒锅或砂锅",fire:"中火焖 20 分钟，下配菜再焖 8 分钟",
+ ing:["鸡腿 4 只","干香菇 8 朵","青椒 1 个","姜片"],
+ sea:["生抽 3 勺","老抽 半勺","黄豆酱 1 勺","蚝油 1 勺","冰糖 10g","料酒"],
+ steps:["鸡腿斩块，冷水下锅焯水，捞出沥干。","少油下鸡块煸至微黄，加姜片、料酒去腥。","加生抽老抽、黄豆酱、蚝油，倒入泡香菇的水，大火烧开转中火焖 20 分钟。","下香菇和青椒块再焖 8 分钟，收汁到浓稠裹肉。"],
+ intro:"香菇水别倒，那是这道菜鲜味的来源。",img:"https://aka.doubaocdn.com/s/POP3sk0j9k"},
+
+{id:"d16",n:"宫保鸡丁",cat:"鸡鸭",t:"25 分钟",lv:"中等",sp:1,
+ pot:"炒锅（厚底）",fire:"小火炒辣椒花椒至棕红；下鸡丁转大火 40 秒；烹汁 15 秒收亮",
+ ing:["鸡腿肉 300g（去皮切 1.2cm 丁）","花生米 80g","干辣椒 10 个","花椒 3g","大葱 2 根（只取葱白）","姜蒜 各少许"],
+ sea:["醋 2 勺","糖 2 勺","生抽 1 勺","料酒 1 勺","淀粉 1 勺","盐 2g","老抽 几滴"],
+ steps:["峨嵋酒家的路子讲究“荔枝口、糊辣香”：糖和醋大致 1:1，入口先甜后酸，辣只做底子不抢戏。","鸡腿肉去皮切 1.2cm 丁，加盐、料酒、淀粉抓上浆腌 15 分钟，封一勺油。","碗汁：醋 2 勺、糖 2 勺、生抽 1 勺、料酒 1 勺、淀粉 1 勺、老抽几滴、清水 3 勺，搅到糖化开。","花生米冷油小火炸到微黄捞出摊凉，凉了才脆。","热锅凉油，小火下干辣椒段和花椒，炒到棕红出糊香即止——多两秒就苦。","转大火下鸡丁快速炒散至变白，加姜蒜和葱白段，烹入碗汁，15 秒收成亮汁。","关火拌入花生米，装盘只见亮油不见汤。"],
+ intro:"峨嵋酒家的看家菜，隋坡反复讲过的一道：糖醋比例、糊辣火候、最后那勺汁，三样都对才算成。",img:"https://aka.doubaocdn.com/s/ITUxkO0TUw"},
+
+{id:"d17",n:"辣子鸡",cat:"鸡鸭",src:"隋坡 · 川味",t:"40 分钟",lv:"中等",sp:1,
+ pot:"炒锅 / 深锅",fire:"六成油温炸 3 分钟，复炸 1 分钟；炒辣椒用小火",
+ ing:["鸡腿 500g","干辣椒 50g","花椒 10g","姜蒜"],
+ sea:["盐 3g","料酒 1 勺","生抽 1 勺","白胡椒 淀粉","糖 2g"],
+ steps:["鸡腿切小块，加盐、料酒、生抽、胡椒、淀粉腌 20 分钟。","油温六成下锅炸 3 分钟捞出，升高油温复炸 1 分钟至干香。","锅留底油，小火下姜蒜、干辣椒段、花椒炒香，辣椒变棕红就行。","倒回鸡块，加糖和少许盐，中火翻炒 2 分钟，让辣香裹满鸡块。"],
+ intro:"在辣椒堆里找鸡块才算过瘾；鸡块要炸到干香才扛得住辣椒。",img:"https://aka.doubaocdn.com/s/echqFjZkLS"},
+
+{id:"d18",n:"三杯鸡",cat:"鸡鸭",src:"家常砂锅",t:"40 分钟",lv:"中等",sp:0,
+ pot:"砂锅",fire:"小火煸姜、中火焖 15 分钟，最后中火收汁",
+ ing:["鸡翅根或鸡腿 600g","九层塔 1 把","蒜 1 头","姜片"],
+ sea:["米酒 100ml","酱油 100ml","黑麻油 80ml","冰糖 15g"],
+ steps:["鸡块焯水沥干；砂锅小火用黑麻油把姜片煸到卷边，下整颗蒜炒香。","下鸡块翻炒上色，加酱油、米酒、冰糖。","加盖小火焖 15 分钟，中途翻一次。","开盖中火收汁至浓稠油亮，关火拌入九层塔，盖 1 分钟再开。"],
+ intro:"一杯酒一杯酱一杯油，比例别乱；九层塔最后放，香气才冲。",img:"https://aka.doubaocdn.com/s/WdKwjBDSyn"},
+
+{id:"d19",n:"啤酒鸭",cat:"鸡鸭",src:"家常焖菜",t:"60 分钟",lv:"中等",sp:1,
+ pot:"炒锅",fire:"干锅煸鸭 5 分钟逼油；中火焖 35 分钟",
+ ing:["鸭 半只","啤酒 500ml","青红椒 各 1 个","姜片 蒜 青蒜"],
+ sea:["豆瓣 半勺","生抽 2 勺","老抽 半勺","冰糖 10g","八角 1 个"],
+ steps:["鸭块冷水下锅焯水，捞出沥干。","干锅下鸭块煸 5 分钟，把鸭油逼出来——这步决定香不香，多余的油盛出去。","下姜蒜、八角、豆瓣炒香，鸭块回锅，加生抽老抽冰糖。","倒一整瓶啤酒没过鸭块，大火烧开转中火焖 35 分钟，下青红椒收汁，撒青蒜。"],
+ intro:"啤酒代替水，麦香压得住鸭腥；先干煸是硬道理。",img:"https://aka.doubaocdn.com/s/rch1iOPgQc"},
+
+{id:"d20",n:"清蒸鲈鱼",cat:"水产",src:"家常蒸菜",t:"25 分钟",lv:"快手",sp:0,
+ pot:"蒸锅 + 长条鱼盘",fire:"水大开后入锅，大火足汽 8 分钟，关火虚蒸 2 分钟",
+ ing:["鲈鱼 1 条（约 600g）","葱姜","红椒丝 香菜"],
+ sea:["蒸鱼豉油 3 勺","料酒 1 勺","盐 少许","花生油 2 勺"],
+ steps:["鱼两面各划两刀，用料酒和少许盐抹匀，鱼身下垫两根葱段架空，让蒸汽走得通。","蒸锅水完全开了再放鱼，大火蒸 8 分钟，关火虚蒸 2 分钟。","把盘里的腥水倒掉，铺上葱丝和红椒丝。","淋蒸鱼豉油，再浇一勺烧到冒烟的热油。"],
+ intro:"一斤鱼八分钟，多一分钟肉就老；腥水一定要倒。",img:"https://aka.doubaocdn.com/s/Ko3yK35KK3"},
+
+{id:"d21",n:"干烧大黄鱼",cat:"水产",src:"老饭骨 · 京味",t:"35 分钟",lv:"有点难",sp:0,
+ pot:"平底锅（煎）+ 炒锅（烧）",fire:"中火煎定型；小火干烧 10 分钟，最后大火收浓",
+ ing:["大黄鱼 1 条","肉末 50g","笋丁 香菇丁 各 30g","葱姜蒜"],
+ sea:["豆瓣 1 勺","生抽 2 勺","料酒 1 勺","糖 1 勺","醋 半勺","盐"],
+ steps:["鱼两面打花刀，抹盐和料酒腌 10 分钟，用厨房纸擦干水分。","热锅热油下鱼，中火煎到两面金黄定型——别急着翻，等它自己脱锅。","底油炒肉末、姜蒜、豆瓣和笋丁香菇丁，加生抽、糖、醋和水。","鱼回锅小火干烧 10 分钟，中途舀汁淋身，最后大火收到汁浓不见汤，撒葱花。"],
+ intro:"“干烧”就是要收干汤汁，最后盘里只剩亮亮的油和料。",img:"https://aka.doubaocdn.com/s/lqlgxGNtnA"},
+
+{id:"d22",n:"水煮鱼",cat:"水产",src:"隋坡 · 川味",t:"45 分钟",lv:"中等",sp:1,
+ pot:"炒锅 + 大盆",fire:"鱼片中火 40 秒；最后泼热油",
+ ing:["草鱼或黑鱼 1 条（片好）","黄豆芽 200g","蛋清 淀粉"],
+ sea:["豆瓣 2 勺","干辣椒 20g","花椒 10g","蒜末","盐 料酒 白胡椒"],
+ steps:["鱼片成薄片，鱼头鱼骨另放；鱼片加盐、料酒、蛋清、淀粉抓黏，腌 15 分钟。","豆芽焯熟垫盆底；鱼头鱼骨煎香加水熬 5 分钟成汤，捞出骨渣。","豆瓣炒出红油，倒入鱼汤煮开，鱼片分散下锅，中火 40 秒变白立刻连汤倒入盆中。","铺干辣椒、花椒、蒜末，泼热油，撒白芝麻。"],
+ intro:"鱼片滑不滑看浆；40 秒是极限，超过就散。",img:"https://aka.doubaocdn.com/s/SQhbWgX4hV"},
+
+{id:"d24",n:"香煎带鱼",cat:"水产",src:"家常煎菜",t:"25 分钟",lv:"快手",sp:0,
+ pot:"平底锅",fire:"中小火一面煎 4 分钟，定型再翻面",
+ ing:["带鱼段 400g","姜 3 片","葱","干淀粉"],
+ sea:["盐 3g","料酒 1 勺","白胡椒 少许","椒盐 蘸食"],
+ steps:["带鱼段洗净擦干，用盐、料酒、姜片、胡椒腌 15 分钟。","两面薄薄拍一层干淀粉，防粘也防溅油。","平底锅油热后下鱼，中小火一面煎 4 分钟至金黄定型，再翻面。","两面金黄后撒椒盐葱花，出锅前沿锅边淋几滴香醋去腥。"],
+ intro:"带鱼最容易破皮，擦干、拍粉、别乱翻，三条都做到就漂亮。",img:"https://aka.doubaocdn.com/s/ytj9wskaIq"},
+
+{id:"d26",n:"地三鲜",cat:"素菜",src:"家常下饭",t:"30 分钟",lv:"中等",sp:0,
+ pot:"平底锅或炒锅",fire:"中火煎土豆至金黄，茄子煎软；最后大火收汁",
+ ing:["土豆 2 个","长茄子 2 根","青椒 2 个","蒜末"],
+ sea:["生抽 2 勺","蚝油 1 勺","糖 1 勺","淀粉 1 勺","盐"],
+ steps:["土豆切滚刀块；茄子切块撒盐腌 10 分钟挤掉水，这样少吸油；青椒切块。","土豆中火煎到金黄熟透，茄子拍薄淀粉煎软。","调汁：生抽、蚝油、糖、淀粉加水拌匀。","蒜末爆香，三样回锅，倒汁大火翻匀收亮。"],
+ intro:"茄子先用盐杀水，是这道菜不油腻的关键。",img:"https://aka.doubaocdn.com/s/6SS54qlbsF"},
+
+{id:"d29",n:"麻婆豆腐",cat:"素菜",src:"隋坡 · 川味",t:"20 分钟",lv:"中等",sp:1,
+ pot:"炒锅或砂锅",fire:"中火㸆 3 分钟；勾芡分三次",
+ ing:["嫩豆腐 1 盒","牛肉末 80g","蒜苗 2 根"],
+ sea:["豆瓣 1.5 勺","豆豉 10g","辣椒面 1 勺","花椒面 1g","生抽 1 勺","淀粉 盐"],
+ steps:["豆腐切 2cm 块，淡盐水浸 5 分钟去豆腥，捞出。","小火把牛肉末炒酥，下豆瓣、豆豉、辣椒面炒出红油。","加水烧开，豆腐下锅轻推，中火㸆 3 分钟——别用铲子翻，晃锅就行。","分三次勾薄芡，让汤汁挂住豆腐，撒蒜苗和花椒面出锅。"],
+ intro:"麻、辣、烫、香、酥、嫩、活，七样里最容易丢的是“烫”。",img:"https://aka.doubaocdn.com/s/1z1bUA6lRq"},
+
+{id:"d30",n:"扬州蛋炒饭",cat:"主食汤",src:"家常主食",t:"15 分钟",lv:"快手",sp:0,
+ pot:"炒锅",fire:"全程大火，饭粒要跳",
+ ing:["隔夜米饭 2 碗","鸡蛋 3 个","虾仁 50g","火腿丁 40g","青豆 30g","葱花"],
+ sea:["盐 3g","白胡椒 少许","猪油或食用油 2 勺","料酒 几滴"],
+ steps:["米饭提前打散；蛋黄单独拌进饭里抓匀，炒出来粒粒金黄。","大火热锅热油，蛋白炒散盛出，虾仁滑熟盛出。","下米饭大火翻炒 2 分钟，炒到饭粒在锅里跳，加火腿丁和青豆。","回锅蛋白和虾仁，撒盐胡椒葱花，翻两下出锅。"],
+ intro:"隔夜饭、大火、蛋黄拌饭，三件事做到就是“金包银”。",img:"https://aka.doubaocdn.com/s/cOljc9a90b"},
+
+{id:"d31",n:"葱油拌面",cat:"主食汤",src:"家常主食",t:"20 分钟",lv:"快手",sp:0,
+ pot:"小奶锅（熬葱油）+ 煮面锅",fire:"最小火熬葱 12 分钟至焦黄；面煮到断生",
+ ing:["细面 200g","小葱 1 把","开洋（虾米）少许"],
+ sea:["生抽 2 勺","老抽 半勺","糖 1 勺","食用油 100ml"],
+ steps:["葱切段，冷油下锅，最小火熬 12 分钟至葱段焦黄——火大就苦。","捞出葱段，下开洋略炸，加生抽、老抽、糖煮开 30 秒关火，成葱油汁。","面条煮到断生立刻捞出，不要过冷水。","趁热浇两勺葱油汁拌匀，铺上焦葱段。"],
+ intro:"葱油是慢工，急不得；面不要过水，挂着油才香。",img:"https://aka.doubaocdn.com/s/AIdWNiBedK"},
+
+{id:"d34",n:"芹菜炒牛肉",cat:"牛羊",src:"家常爆炒",t:"20 分钟",lv:"中等",sp:1,
+ pot:"炒锅（烧到冒烟）",fire:"牛肉大火滑 20 秒；芹菜大火 30 秒",
+ ing:["牛里脊 250g","芹菜 300g","红椒 半个","姜蒜"],
+ sea:["生抽 1.5 勺","蚝油 1 勺","料酒 1 勺","淀粉 1 勺","小苏打 1g","盐"],
+ steps:["牛肉逆纹切薄片，加 1g 小苏打、生抽、料酒、淀粉抓匀，封一勺油腌 15 分钟。小苏打别多，指甲盖量就够。","芹菜去筋切段，沸水焯 15 秒立刻过凉水，保持翠绿脆口。","锅烧到冒烟，热油下牛肉大火滑 20 秒，变色就盛出。","姜蒜爆香下芹菜大火 30 秒，回锅牛肉，加蚝油、生抽、盐翻匀出锅。"],
+ intro:"芹菜先焯后炒，脆；牛肉大火短炒，嫩。两样都别恋战。",img:"https://aka.doubaocdn.com/s/JVyGf6e9bz"},
+
+{id:"d37",n:"西红柿炒鸡蛋",cat:"素菜",t:"10 分钟",lv:"快手",sp:0,
+ pot:"炒锅",fire:"中火炒番茄出沙，炒蛋用大火",
+ ing:["番茄 3 个","鸡蛋 4 个","葱"],
+ sea:["盐 3g","糖 5g","生抽 半勺"],
+ steps:["番茄顶部划十字，开水烫 30 秒去皮切块；鸡蛋加少许盐打散。","热锅多油，蛋液下锅，边缘凝固就用铲子推成大块，七成熟盛出。","底油下番茄中火炒 3 分钟，炒到出汁成沙，加糖和盐。","回锅鸡蛋，翻两下让蛋块裹上番茄汁，撒葱花出锅。"],
+ intro:"家里的第一道菜；糖不能省，能压住番茄的酸。",img:"https://aka.doubaocdn.com/s/2gM5ve8edm"},
+
+{id:"d38",n:"家常豆腐",cat:"素菜",t:"25 分钟",lv:"中等",sp:1,
+ pot:"平底锅 + 炒锅",fire:"中火煎到两面金黄，中火烧 2 分钟",
+ ing:["老豆腐 1 块","青椒 1 个","木耳 20g","蒜"],
+ sea:["豆瓣 半勺","生抽 2 勺","蚝油 1 勺","糖 2g","淀粉"],
+ steps:["老豆腐切 1cm 三角片，用厨房纸吸干水分。","平底锅中火少油，两面各煎 3 分钟至金黄——别急着翻，定型了才不破。","豆瓣和蒜末炒香，加生抽、蚝油、糖和水烧开。","下豆腐、木耳、青椒烧 2 分钟，勾薄芡收汁。"],
+ intro:"豆腐先煎再烧，外面有层壳，汤汁才挂得住。",img:"https://aka.doubaocdn.com/s/4MxoALOBDh"},
+
+{id:"d40",n:"蒜蓉西兰花",cat:"素菜",t:"15 分钟",lv:"快手",sp:0,
+ pot:"煮锅 + 炒锅",fire:"焯水大火 1 分钟；炒蒜蓉用小火",
+ ing:["西兰花 1 颗","蒜 1 头"],
+ sea:["蚝油 1 勺","生抽 1 勺","盐 2g","淀粉 1 勺","油"],
+ steps:["西兰花切小朵，淡盐水泡 10 分钟冲净。","水开加少许盐和油，下西兰花焯 1 分钟，立刻过凉水保绿。","蒜末小火炒香，加蚝油、生抽、少许水和淀粉调成汁。","西兰花回锅大火翻匀，让每朵都挂上汁。"],
+ intro:"焯水加盐加油，颜色才绿得好看。",img:"https://aka.doubaocdn.com/s/agAM7JTcs7"},
+
+{id:"d41",n:"蚝油生菜",cat:"素菜",t:"10 分钟",lv:"快手",sp:0,
+ pot:"煮锅 + 炒锅",fire:"焯 10 秒；酱汁小火",
+ ing:["生菜 1 颗","蒜末 1 勺"],
+ sea:["蚝油 2 勺","生抽 1 勺","糖 2g","淀粉 1 勺","油"],
+ steps:["生菜掰开洗净，水开下锅焯 10 秒立刻捞出装盘——久了筷子一夹就烂。","蒜末小火炒香，加蚝油、生抽、糖、水和淀粉。","酱汁熬到微稠，浇在生菜上。"],
+ intro:"全程不到五分钟，酱汁要稠到能挂住叶子。",img:"https://aka.doubaocdn.com/s/TZ5CgIowEX"},
+
+{id:"d43",n:"农家小炒肉",cat:"猪肉",t:"20 分钟",lv:"中等",sp:1,
+ pot:"炒锅",fire:"大火煸肉 2 分钟，青椒炒出虎皮",
+ ing:["五花肉 300g","青尖椒 5 个","蒜"],
+ sea:["生抽 1.5 勺","老抽 几滴","豆豉 10g","盐 2g","料酒 1 勺"],
+ steps:["五花肉切薄片，青椒斜切块，蒜拍碎。","干锅下肉片中火煸 2 分钟，煸到边缘焦黄、油出来。","肉盛出，用底油大火炒青椒 1 分钟至表皮起虎皮斑。","回锅肉片，加豆豉、生抽、老抽、盐大火翻匀。"],
+ intro:"湖南人的下饭担当：青椒要虎皮，肉要焦边。",img:"https://aka.doubaocdn.com/s/ZU7hk6VGSR"},
+
+{id:"d44",n:"梅菜扣肉",cat:"猪肉",t:"2 小时",lv:"费时间",sp:0,
+ pot:"煮锅 + 炒锅 + 蒸碗",fire:"炸皮大火；蒸制小火 2 小时（高压锅 40 分钟）",
+ ing:["五花肉 500g","梅干菜 80g","葱姜"],
+ sea:["老抽 2 勺","生抽 2 勺","腐乳汁 1 勺","糖 1 勺","料酒 1 勺"],
+ steps:["五花肉整块冷水煮 20 分钟，捞出趁热在皮上抹老抽。","皮朝下入油锅炸到起泡（盖锅盖防溅），捞出泡冷水 10 分钟，皮会起虎皮。","梅干菜泡洗去沙挤干，用底油加糖、生抽炒香。","肉切厚片皮朝下码碗，铺梅菜，浇腐乳汁和调料，蒸 2 小时。","倒扣装盘，原汁勾薄芡浇上。"],
+ intro:"宴客的压桌菜；炸皮和蒸够时间是两个不能省的步骤。",img:"https://aka.doubaocdn.com/s/SU2oNcsXeQ"},
+
+{id:"d45",n:"红烧狮子头",cat:"猪肉",t:"70 分钟",lv:"中等",sp:0,
+ pot:"炒锅 + 砂锅",fire:"中火定型，小火炖 45 分钟",
+ ing:["猪肉末 500g（肥四瘦六）","马蹄 4 个","鸡蛋 1 个","青菜 4 棵"],
+ sea:["生抽 3 勺","老抽 半勺","料酒 1 勺","盐 糖","淀粉","葱姜水"],
+ steps:["肉末加盐和葱姜水，顺一个方向搅到起胶，再加马蹄碎、鸡蛋、淀粉拌匀。","手上抹水团成大丸子，左右手来回摔打十余次排出空气。","中火煎或炸到表面定型金黄。","砂锅垫葱姜，加生抽、老抽、糖和水，小火炖 45 分钟，起锅前下青菜。"],
+ intro:"肉要粗切细斩、摔打上劲，丸子才松而不散。",img:"https://aka.doubaocdn.com/s/r5rENqiwyH"},
+
+{id:"d48",n:"黑椒牛柳",cat:"牛羊",t:"25 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 平底锅",fire:"大火煎牛柳 30 秒，中火炒配菜",
+ ing:["牛里脊 300g","洋葱 半个","红黄彩椒 各半个","蒜"],
+ sea:["黑胡椒碎 1 勺","黑椒酱 2 勺","生抽 1 勺","蚝油 1 勺","淀粉"],
+ steps:["牛里脊切 1cm 粗条，加生抽、淀粉、少许油腌 15 分钟。","锅烧到冒烟，牛柳大火煎 30 秒定型，翻面再 20 秒，盛出。","洋葱、彩椒中火炒软，加黑椒酱、蚝油和两勺水。","回锅牛柳，撒黑胡椒碎，大火翻匀立刻出锅。"],
+ intro:"牛柳只煎一次，回锅只为裹酱，久了就柴。",img:"https://aka.doubaocdn.com/s/cMBhiN5G18"},
+
+{id:"d49",n:"葱爆羊肉",cat:"牛羊",t:"15 分钟",lv:"快手",sp:0,
+ pot:"炒锅",fire:"全程大火，30 秒一翻",
+ ing:["羊肉片 300g","大葱 2 根","姜蒜"],
+ sea:["生抽 1 勺","料酒 1 勺","香醋 半勺","盐 2g","孜然 可选"],
+ steps:["羊肉切薄片，加料酒、生抽抓匀腌 10 分钟；大葱斜切段。","锅烧冒烟，多油下羊肉大火爆炒 20 秒至变色。","下葱段、姜蒜，大火再炒 30 秒，葱要还是脆的。","沿锅边烹醋，加盐，翻两下出锅。"],
+ intro:"葱爆的关键是“爆”——火不够，就成了葱煮羊肉。",img:"https://aka.doubaocdn.com/s/uQuYCc8ysr"},
+
+{id:"d50",n:"萝卜炖羊肉",cat:"牛羊",t:"90 分钟",lv:"费时间",sp:0,
+ pot:"砂锅",fire:"大火烧开转小火炖 70 分钟",
+ ing:["羊肉 500g","白萝卜 1 根","枸杞 少许","香菜 姜"],
+ sea:["料酒 2 勺","盐 4g","白胡椒 1g","葱段"],
+ steps:["羊肉切块冷水下锅焯水，撇净浮沫，捞出用温水冲。","砂锅放羊肉、姜葱、料酒，一次加足热水，大火烧开。","转小火炖 60 分钟至肉软，下白萝卜块再炖 20 分钟。","加盐、白胡椒，撒枸杞和香菜。"],
+ intro:"冬天的一锅暖；萝卜后放，才不会炖成泥。",img:"https://aka.doubaocdn.com/s/Nosi7WU211"},
+
+{id:"d51",n:"大盘鸡",cat:"鸡鸭",t:"55 分钟",lv:"中等",sp:1,
+ pot:"炒锅 / 大铁锅",fire:"中火焖 25 分钟",
+ ing:["鸡腿 500g","土豆 2 个","青椒 1 个","宽面 200g"],
+ sea:["豆瓣 1 勺","番茄酱 1 勺","生抽 2 勺","老抽 半勺","啤酒 200ml","八角 桂皮","糖"],
+ steps:["鸡块焯水沥干；土豆切滚刀块。","炒糖色或直接下鸡块煸至微黄，加姜蒜、八角桂皮。","加豆瓣、番茄酱炒香，倒啤酒、生抽老抽，中火焖 20 分钟。","下土豆再焖 10 分钟，加青椒块收汁；宽面煮熟拌进汤汁。"],
+ intro:"汤汁一定要留够，最后拌面才是大盘鸡的灵魂。",img:"https://aka.doubaocdn.com/s/SxBVdTQhgS"},
+
+{id:"d52",n:"可乐鸡翅",cat:"鸡鸭",t:"30 分钟",lv:"快手",sp:0,
+ pot:"平底锅 / 炒锅",fire:"中火煎，中火收汁",
+ ing:["鸡翅中 10 个","可乐 330ml","姜片"],
+ sea:["生抽 2 勺","老抽 几滴","料酒 1 勺","盐 少许","白芝麻"],
+ steps:["鸡翅两面各划两刀，冷水下锅焯水去腥，捞出擦干。","少油中火煎至两面金黄。","加姜片、料酒、生抽、老抽，倒可乐没过鸡翅。","中火收汁 10 分钟至浓稠挂翅，撒芝麻。"],
+ intro:"甜味来自可乐，盐要少放，不然会齁。",img:"https://aka.doubaocdn.com/s/3MxNWMncsc"},
+
+{id:"d54",n:"香菇滑鸡",cat:"鸡鸭",t:"35 分钟",lv:"快手",sp:0,
+ pot:"蒸锅",fire:"大火足汽 15 分钟",
+ ing:["鸡腿肉 400g","干香菇 8 朵","姜丝"],
+ sea:["生抽 2 勺","蚝油 1 勺","糖 2g","淀粉 1 勺","料酒 1 勺","香油"],
+ steps:["鸡腿肉切块，加生抽、蚝油、糖、料酒、淀粉、姜丝抓匀腌 20 分钟。","香菇泡发切片拌入鸡肉，加一勺泡菇水。","平铺在盘中，水开大火蒸 15 分钟。","出锅淋香油，撒葱花。"],
+ intro:"淀粉是“滑”的来源，腌够时间肉才嫩。",img:"https://aka.doubaocdn.com/s/YboOpEoiRI"},
+
+{id:"d55",n:"家烧鲳鱼",cat:"水产",t:"30 分钟",lv:"中等",sp:0,
+ pot:"平底锅 + 炒锅 / 深盘",fire:"中火煎定型，中小火烧 8 分钟",
+ ing:["鲳鱼 1 条","葱姜蒜","干辣椒 1 个"],
+ sea:["生抽 2 勺","老抽 半勺","料酒 2 勺","糖 1 勺","醋 半勺"],
+ steps:["鲳鱼处理干净，两面打十字花刀，抹盐和料酒腌 10 分钟，擦干。","热锅热油下鱼，中火煎到两面金黄定型，别急着翻。","下葱姜蒜、干辣椒炒香，加生抽、老抽、糖、醋和热水。","中小火烧 8 分钟，中途舀汁淋鱼身，最后大火收汁到浓稠。"],
+ intro:"江浙人家的家常做法：煎定型、烧入味，汁要收到能挂鱼。",img:"https://aka.doubaocdn.com/s/9PrGEOF4o3"},
+
+{id:"d57",n:"酸菜鱼",cat:"水产",t:"45 分钟",lv:"中等",sp:1,
+ pot:"炒锅 + 大碗",fire:"中火煮鱼片 1 分钟",
+ ing:["黑鱼或草鱼 1 条（片好）","酸菜 300g","泡椒","蛋清 淀粉"],
+ sea:["盐 料酒 白胡椒","白醋 1 勺","花椒 干辣椒"],
+ steps:["鱼片加盐、料酒、蛋清、淀粉抓黏腌 15 分钟；鱼骨另放。","酸菜切段挤干，中火炒 3 分钟炒出酸香，下泡椒。","鱼骨煎香加水熬 5 分钟，捞渣，倒入酸菜汤煮开。","鱼片分散下锅，中火 1 分钟变白即关火，撒花椒干辣椒泼热油。"],
+ intro:"汤要白、鱼要嫩；酸菜先炒过才不寡淡。",img:"https://aka.doubaocdn.com/s/VBAEtWyAVA"},
+
+{id:"d58",n:"油焖大虾",cat:"水产",t:"25 分钟",lv:"中等",sp:0,
+ pot:"炒锅",fire:"中火焖 5 分钟，大火收汁",
+ ing:["大虾 500g","葱姜"],
+ sea:["生抽 1 勺","料酒 2 勺","糖 1 勺","番茄酱 1 勺","盐 少许"],
+ steps:["虾剪枪去须，开背去虾线，擦干。","中火多油，虾下锅煎到变红卷曲，用铲子压虾头挤出虾油。","下葱姜，加料酒、生抽、糖、番茄酱和小半碗水。","加盖中火焖 5 分钟，开盖大火收汁至亮。"],
+ intro:"压虾头出红油，是这道菜颜色和鲜味的来源。",img:"https://aka.doubaocdn.com/s/qslBmUA0eO"},
+
+{id:"d60",n:"豆角焖面",cat:"主食汤",t:"40 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 铁锅",fire:"中火焖 12 分钟，最后小火收干",
+ ing:["鲜面条 300g","豆角 300g","五花肉 100g","蒜"],
+ sea:["生抽 2 勺","老抽 半勺","盐 3g","八角 1 个"],
+ steps:["豆角掰段，五花肉切片，面条抖散。","炒肉片出油，下豆角炒到变色，加生抽老抽、八角和水，刚好没过豆角。","面条铺在豆角上，盖盖中火焖 12 分钟，中途沿锅边补少量水。","开盖撒蒜末，用筷子抖散拌匀，汤汁收干即可。"],
+ intro:"面在菜上蒸，吸的是豆角和肉的汤，比炒面香。",img:"https://aka.doubaocdn.com/s/IORsVW1RHD"},
+
+{id:"d61",n:"玉米排骨汤",cat:"主食汤",t:"80 分钟",lv:"费时间",sp:0,
+ pot:"汤锅 / 砂锅",fire:"大火烧开转小火炖 60 分钟",
+ ing:["排骨 500g","玉米 2 根","胡萝卜 1 根","枸杞"],
+ sea:["盐 4g","料酒 1 勺","姜片","白胡椒"],
+ steps:["排骨冷水下锅焯水，撇沫捞出冲净。","加姜片、料酒和足量水，大火烧开转小火炖 40 分钟。","下玉米段、胡萝卜块再炖 20 分钟。","加盐、白胡椒，撒枸杞，关火焖 5 分钟。"],
+ intro:"汤清味甜，盐一定最后放，早放肉就紧。",img:"https://aka.doubaocdn.com/s/YUNV2lyh4U"},
+
+{id:"d62",n:"锅包肉",cat:"猪肉",t:"35 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 深锅（复炸）",fire:"六成油温初炸定型，七成复炸 20 秒；糖醋汁中火熬到起大泡",
+ ing:["猪里脊 300g","胡萝卜丝 葱姜丝","香菜 2 根","土豆淀粉 100g"],
+ sea:["白醋 3 勺","白糖 3 勺","盐 2g","料酒 1 勺"],
+ steps:["里脊切 3mm 厚大片，用盐和料酒抓匀。","土豆淀粉加水泡开静置，倒掉上层清水，用沉底的湿淀粉抓匀挂糊——这是外壳脆的关键。","油温六成，逐片下锅炸到定型捞出。","油温升到七成，复炸 20 秒至金黄酥脆。","锅留少油下葱姜丝、胡萝卜丝，加白醋、糖、盐和水熬到起大泡。","倒入肉片快速翻匀，裹上薄薄一层糖醋汁，撒香菜立刻出锅。"],
+ intro:"东北馆子的头牌；湿淀粉挂糊、两次复炸，才有那声脆响。",img:"https://aka.doubaocdn.com/s/fZM3WiEt2M"},
+
+{id:"d63",n:"青椒排骨",cat:"猪肉",t:"45 分钟",lv:"中等",sp:1,
+ pot:"炒锅",fire:"中火煎排骨；中火焖 10 分钟；大火收汁",
+ ing:["肋排 400g","青椒 4 个","姜蒜"],
+ sea:["生抽 2 勺","老抽 半勺","蚝油 1 勺","糖 1 勺","料酒 2 勺"],
+ steps:["排骨斩小段，冷水泡 20 分钟去血水，沥干。","少油中火把排骨两面煎到微焦。","下姜蒜炒香，加生抽、老抽、蚝油、糖、料酒和热水，中火焖 10 分钟。","下青椒块，大火收汁到浓稠，青椒要保持翠绿。"],
+ intro:"咸鲜里带一点青椒清香，汤汁拌饭很合适。",img:"https://aka.doubaocdn.com/s/psEYqg0fIF"},
+
+{id:"d64",n:"西兰花炒虾仁",cat:"水产",t:"20 分钟",lv:"快手",sp:0,
+ pot:"炒锅",fire:"大火快炒 1 分钟",
+ ing:["虾仁 200g","西兰花 1 颗","蒜 3 瓣"],
+ sea:["盐 2g","料酒 1 勺","白胡椒 少许","淀粉 1 勺","蚝油 半勺"],
+ steps:["西兰花切小朵，淡盐水泡 10 分钟，焯水 1 分钟后过凉。","虾仁去虾线，加盐、料酒、淀粉、白胡椒抓匀腌 10 分钟。","热锅下虾仁大火炒到变粉红，盛出。","蒜末爆香，下西兰花和虾仁，加盐和蚝油，大火翻炒 1 分钟。"],
+ intro:"清爽的一盘；虾仁别炒久，变色就够了。",img:"https://aka.doubaocdn.com/s/KXF0XwLMHu"},
+
+{id:"d65",n:"青菜烧牛肉",cat:"牛羊",t:"50 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 砂锅",fire:"中火焖 30 分钟",
+ ing:["牛腩或牛腱 400g","小青菜 6 棵","姜片"],
+ sea:["生抽 2 勺","老抽 半勺","料酒 2 勺","冰糖 10g","八角 1 个"],
+ steps:["牛肉切厚片，冷水下锅焯水冲净。","少油炒香姜片和八角，下牛肉煸到变色，加料酒、生抽、老抽、冰糖。","加热水没过，中火焖 30 分钟至牛肉软。","下青菜烧 3 分钟，大火略收汁，青菜保持碧绿。"],
+ intro:"江南人家的一碗；牛肉先焖软，青菜最后放才不会黄。",img:"https://aka.doubaocdn.com/s/98YnsoxdW3"},
+
+{id:"d66",n:"冬瓜桑拿鸡",cat:"鸡鸭",t:"45 分钟",lv:"中等",sp:0,
+ pot:"砂锅",fire:"小火焖 25 分钟，靠蒸汽“桑拿”",
+ ing:["鸡腿 500g","冬瓜 400g","姜 葱"],
+ sea:["盐 3g","料酒 1 勺","白胡椒 少许","枸杞 少许"],
+ steps:["鸡腿斩块，用盐、料酒、白胡椒、姜片腌 15 分钟。","冬瓜切厚片铺满砂锅底，鸡块铺在冬瓜上，不加水。","加盖小火焖 25 分钟——冬瓜出水成汤，鸡在蒸汽里焖熟。","开盖撒枸杞葱花，尝味再补盐。"],
+ intro:"“桑拿”就是不加一滴水，靠冬瓜自己的汤把鸡蒸熟，汤清肉嫩。",img:"https://aka.doubaocdn.com/s/zMs8mBPu86"},
+
+{id:"d67",n:"鲫鱼汤",cat:"主食汤",t:"40 分钟",lv:"中等",sp:0,
+ pot:"平底锅 + 汤锅",fire:"中火煎鱼；大火冲汤 10 分钟",
+ ing:["鲫鱼 2 条","嫩豆腐 半盒","姜 葱"],
+ sea:["盐 3g","料酒 1 勺","白胡椒 1g"],
+ steps:["鲫鱼处理干净，两面划刀，用料酒和盐腌 10 分钟，擦干。","热锅热油，鱼下锅中火煎到两面金黄——煎透是汤白的前提。","冲入滚开的水，大火滚 10 分钟，汤会变成奶白。","转中火下豆腐煮 5 分钟，加盐、白胡椒，撒葱花。"],
+ intro:"汤白的秘密只有两条：鱼要煎透，水要滚开。",img:"https://aka.doubaocdn.com/s/uVF4A8ODVT"},
+
+{id:"d68",n:"栗子烧鸡",cat:"鸡鸭",t:"50 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 砂锅",fire:"中火焖 25 分钟",
+ ing:["鸡腿 500g","板栗 200g","姜 葱"],
+ sea:["生抽 3 勺","老抽 半勺","冰糖 10g","料酒 2 勺","八角 1 个"],
+ steps:["板栗划十字，煮 5 分钟剥壳。","鸡块焯水，少油煸到微黄，加姜、八角、料酒。","加生抽、老抽、冰糖和热水，中火焖 15 分钟。","下板栗再焖 10 分钟，大火收汁至浓稠。"],
+ intro:"秋天的一道；板栗后放，才不会炖成泥。",img:"https://aka.doubaocdn.com/s/KUeX7Hq9NJ"},
+
+{id:"d69",n:"罐焖牛肉",cat:"牛羊",t:"2 小时",lv:"费时间",sp:0,
+ pot:"陶罐 / 砂锅",fire:"小火焖 90 分钟（或烤箱 160 度）",
+ ing:["牛腩 600g","胡萝卜 1 根","土豆 1 个","洋葱 半个","番茄 1 个"],
+ sea:["番茄酱 2 勺","生抽 2 勺","料酒 2 勺","盐","黑胡椒","香叶 1 片"],
+ steps:["牛腩切块焯水；洋葱、胡萝卜、土豆切块。","少油炒洋葱和番茄出汁，加番茄酱炒香，下牛肉翻匀。","加料酒、生抽、香叶和热水，倒进陶罐盖好。","小火焖 90 分钟，下胡萝卜土豆再焖 20 分钟，加盐和黑胡椒。"],
+ intro:"用罐子焖，水几乎不流失，肉味全锁在汤里。",img:"https://aka.doubaocdn.com/s/HJ9tIdoCgJ"},
+
+{id:"d70",n:"龙井虾仁",cat:"水产",t:"30 分钟",lv:"中等",sp:0,
+ pot:"炒锅",fire:"大火快炒 40 秒",
+ ing:["河虾仁 300g","龙井茶叶 3g","蛋清 1 个"],
+ sea:["盐 2g","料酒 1 勺","淀粉 1 勺","猪油 2 勺"],
+ steps:["虾仁用盐抓洗到发亮，吸干水，加蛋清和淀粉上浆，冷藏 20 分钟。","龙井用 80 度水泡开，留茶汤和几片茶叶。","锅烧热下猪油，虾仁大火滑炒 40 秒至变色。","淋一勺茶汤，下茶叶，加盐翻两下立刻出锅。"],
+ intro:"茶香配虾鲜，杭州的雅菜；上浆后必须冷藏，口感才弹。",img:"https://aka.doubaocdn.com/s/oZ9hV6UY0X"},
+
+{id:"d71",n:"蟹粉豆腐",cat:"水产",t:"35 分钟",lv:"中等",sp:0,
+ pot:"炒锅 / 砂锅",fire:"小火炒蟹粉 2 分钟；中火煨 3 分钟",
+ ing:["嫩豆腐 1 盒","蟹粉 100g（蟹黄加蟹肉）","姜末 1 勺","葱花"],
+ sea:["黄酒 1 勺","盐 2g","白胡椒","淀粉 1 勺","猪油 2 勺","香醋 几滴"],
+ steps:["豆腐切块，淡盐水浸 5 分钟。","猪油小火下姜末，倒入蟹粉慢炒 2 分钟，炒出蟹黄油。","加黄酒、盐和半碗水烧开，下豆腐中火煨 3 分钟。","分两次勾薄芡，淋几滴香醋提鲜，撒葱花。"],
+ intro:"私房菜里的“贵气”；蟹粉要小火慢炒出油，豆腐别翻碎。",img:"https://aka.doubaocdn.com/s/xqfjWJyT8v"},
+
+{id:"d72",n:"花雕醉鸡",cat:"凉菜",t:"40 分钟 + 浸 12 小时",lv:"中等",sp:0,
+ pot:"汤锅 + 密封盒",fire:"微沸浸煮 15 分钟",
+ ing:["鸡腿 2 只","花雕酒 200ml","枸杞","姜片"],
+ sea:["盐 4g","糖 5g","生抽 2 勺","话梅 2 颗"],
+ steps:["鸡腿冷水下锅，水微沸后小火浸煮 15 分钟，捞出立刻进冰水浸凉。","花雕酒、盐、糖、生抽、姜片、话梅调成醉卤。","鸡腿浸入醉卤，冷藏 12 小时以上。","切片装盘，淋一勺醉卤，点几粒枸杞。"],
+ intro:"冷盘里的雅致；冰水镇过再醉，皮才紧、肉才弹。",img:"https://aka.doubaocdn.com/s/313BxoK9N0"},
+
+{id:"d73",n:"干贝蒸水蛋",cat:"素菜",t:"20 分钟",lv:"快手",sp:0,
+ pot:"蒸锅",fire:"小火蒸 10 分钟，火大会起蜂窝",
+ ing:["鸡蛋 3 个","干贝 20g","温水"],
+ sea:["生抽 1 勺","盐 2g","香油 几滴","葱花"],
+ steps:["干贝温水泡软撕成丝，泡的水留着。","鸡蛋打散，加 1.5 倍温水和少许盐，过筛两遍去泡沫。","倒入浅碗，盖盘子或保鲜膜，小火蒸 10 分钟。","铺干贝丝再蒸 2 分钟，淋生抽和香油，撒葱花。"],
+ intro:"蛋面要像镜子；过筛、小火、盖盖子，三件做到就平。",img:"https://aka.doubaocdn.com/s/lVBizwWDUE"},
+
+{id:"d74",n:"松鼠桂鱼",cat:"水产",t:"60 分钟",lv:"有点难",sp:0,
+ pot:"炒锅 / 深锅",fire:"六成油温定型，七成复炸至金黄",
+ ing:["桂鱼 1 条（约 750g）","松子 20g","青豆 30g","淀粉"],
+ sea:["番茄酱 3 勺","糖 3 勺","白醋 3 勺","盐","料酒"],
+ steps:["鱼去头，从背剖开去骨，鱼肉打菱形花刀，皮不能断。","用盐和料酒腌 10 分钟，拍满干淀粉再抖掉多余粉。","六成油温提着鱼尾下锅定型，再整条入锅炸至金黄，复炸一次更脆。","番茄酱、糖、白醋、盐加水熬成糖醋汁，勾薄芡。","鱼装盘摆成松鼠形，浇汁，撒松子和青豆。"],
+ intro:"宴客的功夫菜；花刀均匀、油温够高，花才会“开”。",img:"https://aka.doubaocdn.com/s/oip9EDZ8xb"},
+
+{id:"d75",n:"荷叶粉蒸排骨",cat:"猪肉",t:"90 分钟",lv:"中等",sp:0,
+ pot:"蒸笼 / 蒸锅",fire:"大火足汽 60 分钟",
+ ing:["肋排 500g","蒸肉米粉 80g","干荷叶 2 张","姜末"],
+ sea:["豆瓣 半勺","腐乳汁 1 勺","生抽 2 勺","糖 1 勺","料酒 1 勺","花椒粉 1g"],
+ steps:["排骨斩段，冷水泡 30 分钟，沥干。","加豆瓣、腐乳汁、生抽、糖、料酒、姜末、花椒粉抓匀，腌 30 分钟。","拌入蒸肉米粉和少量水，让每块都裹上粉。","荷叶温水泡软铺在蒸笼，排骨码上包好。","大火足汽蒸 60 分钟，出锅撒葱花。"],
+ intro:"荷叶的清香渗进米粉里，是江南馆子的做法。",img:"https://aka.doubaocdn.com/s/ibLLUnOdBX"},
+
+{id:"d76",n:"腌笃鲜",cat:"主食汤",t:"90 分钟",lv:"中等",sp:0,
+ pot:"砂锅",fire:"小火“笃”60 分钟，汤面只冒小泡",
+ ing:["咸肉 150g","鲜五花肉 200g","春笋 2 根","百叶结 100g"],
+ sea:["料酒 1 勺","姜片","盐 少放"],
+ steps:["咸肉和鲜肉切块分别焯水；咸肉先泡 20 分钟去部分咸味。","砂锅下两种肉、姜片、料酒，加水大火烧开。","转小火“笃”60 分钟，把汤滚到乳白。","下笋块和百叶结再煮 15 分钟，尝味再决定要不要加盐。"],
+ intro:"江南春天的仪式；“笃”就是小火慢滚，咸鲜自己会出来。",img:"https://aka.doubaocdn.com/s/7Mymb3ixzU"},
+
+{id:"d77",n:"竹荪炖鸡汤",cat:"主食汤",t:"100 分钟",lv:"中等",sp:0,
+ pot:"砂锅",fire:"小火炖 80 分钟",
+ ing:["老母鸡 半只","竹荪 8 根","枸杞","姜片"],
+ sea:["盐 4g","料酒 1 勺","白胡椒"],
+ steps:["竹荪用淡盐水泡 20 分钟，剪去网状裙边，反复冲洗。","鸡块焯水，加姜、料酒和足量水，大火烧开转小火炖 80 分钟。","下竹荪再炖 10 分钟——久了就化。","加盐、白胡椒，撒枸杞。"],
+ intro:"竹荪最会吸汤，咬下去一口鲜；别久炖，十分钟刚好。",img:"https://aka.doubaocdn.com/s/eE6qHxXxX3"},
+
+{id:"d78",n:"红酒烩牛尾",cat:"牛羊",t:"2.5 小时",lv:"费时间",sp:0,
+ pot:"厚底锅 / 铸铁锅",fire:"大火煎上色；小火烩 2 小时",
+ ing:["牛尾 800g","洋葱 1 个","胡萝卜 1 根","番茄 1 个","迷迭香"],
+ sea:["红酒 300ml","番茄酱 2 勺","盐","黑胡椒","香叶 1 片"],
+ steps:["牛尾擦干，撒盐和黑胡椒，大火煎到四面焦褐，盛出。","同一锅炒洋葱、胡萝卜、番茄，加番茄酱炒匀。","倒红酒煮开，刮起锅底的焦香，放回牛尾，加香叶和热水没过。","小火烩 2 小时，中途补少量水；最后开盖收汁，加迷迭香。"],
+ intro:"西式私房的做法；煎出焦褐层、用红酒刮锅底，味道才厚。",img:"https://aka.doubaocdn.com/s/vcE0YoTPEj"},
+
+{id:"d79",n:"金汤肥牛",cat:"牛羊",t:"30 分钟",lv:"中等",sp:1,
+ pot:"炒锅 + 深碗",fire:"中火炒金汤；肥牛 30 秒",
+ ing:["肥牛卷 300g","金针菇 1 把","南瓜 100g","黄灯笼椒酱 1 勺"],
+ sea:["盐","白醋 1 勺","糖 2g","蒜末","青红椒圈"],
+ steps:["南瓜蒸软压成泥；金针菇焯熟垫碗底。","小火炒黄灯笼椒酱和蒜末，加南瓜泥和水煮开，调成金汤。","加盐、糖、白醋调味，汤要保持亮黄。","肥牛卷下汤中火 30 秒变色即关火，连汤倒入碗里，撒椒圈。"],
+ intro:"汤色靠南瓜和黄椒酱，肥牛只烫不煮。",img:"https://aka.doubaocdn.com/s/qsV2jO2Upy"},
+
+{id:"d80",n:"苹果烤奶",cat:"甜品饮品",kind:"drink",t:"25 分钟",lv:"快手",sp:0,
+ pot:"烤箱 + 烤碗",fire:"180 度烤 15 分钟",
+ ing:["苹果 1 个","牛奶 300ml","鸡蛋 1 个"],
+ sea:["糖 10g","肉桂粉 少许"],
+ steps:["苹果去核切薄片；鸡蛋加糖打散，倒入牛奶拌匀。","过筛倒入烤碗，苹果片铺在表面。","烤箱 180 度烤 15 分钟，到表面结奶皮、有一点焦斑。","出炉撒肉桂粉，温热吃。"],
+ intro:"奶香裹着烤软的苹果，冷天最舒服的一碗。",img:"https://aka.doubaocdn.com/s/GAvxwVA7Z6"},
+
+{id:"d81",n:"双皮奶",cat:"甜品饮品",kind:"drink",t:"40 分钟",lv:"中等",sp:0,
+ pot:"蒸锅 + 小锅",fire:"小火煮奶；小火蒸 12 分钟",
+ ing:["全脂牛奶 400ml","蛋清 3 个","红豆 少许","枸杞"],
+ sea:["糖 20g"],
+ steps:["牛奶小火加热到微沸，倒入碗中静置结第一层奶皮。","蛋清加糖打散，把牛奶从碗边倒出，奶皮留在碗底。","牛奶与蛋清拌匀过筛，沿碗边倒回，奶皮会自己浮起来。","盖保鲜膜小火蒸 12 分钟，关火焖 5 分钟，顶上铺红豆。"],
+ intro:"广式甜品的经典；全脂奶和“留皮回倒”是关键。",img:"https://aka.doubaocdn.com/s/URXtzhODwU"},
+
+{id:"d82",n:"银耳莲子羹",cat:"甜品饮品",kind:"drink",t:"60 分钟",lv:"中等",sp:0,
+ pot:"汤锅 / 砂锅",fire:"小火炖 50 分钟",
+ ing:["银耳 1 朵","莲子 20g","红枣 6 颗","枸杞"],
+ sea:["冰糖 20g"],
+ steps:["银耳冷水泡发 1 小时，剪掉黄色根蒂，撕成小朵——撕得越碎越出胶。","银耳、莲子加水大火烧开，转小火炖 40 分钟。","下红枣和冰糖再炖 10 分钟，到汤汁微稠。","关火撒枸杞，焖 5 分钟。"],
+ intro:"出胶靠撕碎和小火慢炖，急不来。",img:"https://aka.doubaocdn.com/s/UaeYDehJpM"},
+
+{id:"d83",n:"香蕉燕麦奶昔",cat:"甜品饮品",kind:"drink",t:"5 分钟",lv:"快手",sp:0,
+ pot:"搅拌机",fire:"不用开火",
+ ing:["香蕉 1 根","即食燕麦 30g","牛奶 250ml"],
+ sea:["蜂蜜 1 勺","肉桂粉 少许"],
+ steps:["香蕉切段，燕麦用少量热水泡软。","全部倒入搅拌机，加牛奶和蜂蜜打 30 秒。","倒入杯中，撒肉桂粉。"],
+ intro:"早餐或加餐，一杯顶饱，甜味全靠香蕉。",img:"https://aka.doubaocdn.com/s/w1RjjJVoy2"},
+
+{id:"d84",n:"酸奶水果杯",cat:"甜品饮品",kind:"drink",t:"10 分钟",lv:"快手",sp:0,
+ pot:"玻璃杯",fire:"不用开火",
+ ing:["浓稠酸奶 200g","草莓 4 颗","蓝莓 一小把","燕麦片 20g"],
+ sea:["蜂蜜 1 勺"],
+ steps:["草莓切片，蓝莓洗净。","杯底铺酸奶，再铺燕麦和水果，交替两层。","顶层摆水果，淋蜂蜜。"],
+ intro:"五分钟的下午茶，好看也顶饱。",img:"https://aka.doubaocdn.com/s/oF8A2e9cxv"},
+
+{id:"d85",n:"蜂蜜柠檬水",cat:"甜品饮品",kind:"drink",t:"5 分钟",lv:"快手",sp:0,
+ pot:"玻璃杯",fire:"不用开火",
+ ing:["柠檬 半个","温水 300ml","薄荷叶"],
+ sea:["蜂蜜 2 勺"],
+ steps:["柠檬用盐搓洗表皮，切薄片。","温水加蜂蜜搅开，放入柠檬片。","静置 3 分钟，加薄荷。"],
+ intro:"水温别超过 60 度，蜂蜜的活性才留得住。",img:"https://aka.doubaocdn.com/s/PIKcEHNcCm"},
+
+{id:"d86",n:"红枣桂圆茶",cat:"甜品饮品",kind:"drink",t:"20 分钟",lv:"快手",sp:0,
+ pot:"小锅 / 养生壶",fire:"小火煮 15 分钟",
+ ing:["红枣 6 颗","桂圆肉 10g","枸杞 5g","姜 2 片"],
+ sea:["红糖 10g 可选"],
+ steps:["红枣去核切开，桂圆肉洗净。","加水小火煮 15 分钟，下枸杞再煮 2 分钟。","可加红糖调味，趁热喝。"],
+ intro:"手脚凉的时候一杯下去，从里往外暖。",img:"https://aka.doubaocdn.com/s/lH1WfJkkfU"},
+
+{id:"d87",n:"桂花酒酿小圆子",cat:"甜品饮品",kind:"drink",t:"15 分钟",lv:"快手",sp:0,
+ pot:"小锅",fire:"中火煮",
+ ing:["小圆子 150g","酒酿 100g","鸡蛋 1 个","干桂花"],
+ sea:["糖 10g","淀粉 1 勺"],
+ steps:["水开下小圆子，浮起来就熟。","加酒酿和糖，小火煮 1 分钟。","淋蛋液成蛋花，勾一点薄芡。","关火撒干桂花。"],
+ intro:"甜香带一点酒气，冬天的暖。",img:"https://aka.doubaocdn.com/s/VfknQ4NDcg"},
+
+{id:"d88",n:"冰糖炖雪梨",cat:"甜品饮品",kind:"drink",t:"50 分钟",lv:"快手",sp:0,
+ pot:"炖盅 / 小锅",fire:"小火炖 40 分钟",
+ ing:["雪梨 1 个","银耳 20g","枸杞"],
+ sea:["冰糖 15g"],
+ steps:["雪梨去皮，从顶部切开挖核，做成梨盅。","放入泡发的银耳和冰糖，盖回梨盖。","加水没过一半，小火炖 40 分钟至梨身通透。","撒枸杞再焖 5 分钟。"],
+ intro:"嗓子不舒服的时候喝，梨要炖到透明才润。",img:"https://aka.doubaocdn.com/s/kYtUlMw3MP"},
+
+{id:"d89",n:"核桃黑芝麻糊",cat:"甜品饮品",kind:"drink",t:"15 分钟",lv:"快手",sp:0,
+ pot:"搅拌机 + 小锅",fire:"小火煮 3 分钟，边煮边搅",
+ ing:["黑芝麻 50g","核桃 20g","糯米粉 20g","牛奶 200ml"],
+ sea:["糖 10g"],
+ steps:["黑芝麻和核桃小火炒香，放凉。","加牛奶打成细糊，过筛更顺滑。","糯米粉加水化开，与芝麻糊一起小火煮 3 分钟。","加糖调味，撒核桃碎。"],
+ intro:"自己打的芝麻糊没有添加，香气比买来的足。",img:"https://aka.doubaocdn.com/s/qpdn7cg5Ri"}
+];
+
+/* =========================================================
+   状态与存储
+   ========================================================= */
+var CART_KEY="fm_cart_v1", ORDER_KEY="fm_orders_v1", CFG_KEY="fm_cfg_v1";
+var DEFAULT_TOPIC="jia-yan-r4t7w2m9";
+var state = {
+  cat:"全部", q:"",
+  cart:[], orders:[], cfg:{name:"我", topic:DEFAULT_TOPIC, store:"", meal:"今天晚饭"},
+  draft:{spicy:"微辣", note:""},
+  lastPush:"",
+  newCount:0, sync:{ok:null, at:null, err:""}, storeMsg:""
+};
+function load(){
+  try{
+    var c=JSON.parse(localStorage.getItem(CART_KEY)||"[]"); if(Array.isArray(c)) state.cart=c;
+    var o=JSON.parse(localStorage.getItem(ORDER_KEY)||"[]"); if(Array.isArray(o)) state.orders=o;
+    var g=JSON.parse(localStorage.getItem(CFG_KEY)||"{}"); if(g&&typeof g==="object"){state.cfg=Object.assign(state.cfg,g);}
+    if(!state.cfg.topic) state.cfg.topic=DEFAULT_TOPIC;
+    if(!state.cfg.store) state.cfg.store="";
+    sortOrders();
+  }catch(e){}
+}
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); }
+function saveOrders(){ localStorage.setItem(ORDER_KEY, JSON.stringify(state.orders)); }
+function saveCfg(){ localStorage.setItem(CFG_KEY, JSON.stringify(state.cfg)); }
+
+var CATS=["全部","凉菜","猪肉","牛羊","鸡鸭","水产","素菜","主食汤","甜品饮品"];
+var SPICY_OPT=["不辣","微辣","中辣"];
+var CAT_ICON={ "凉菜":"", "猪肉":"", "牛羊":"", "鸡鸭":"", "水产":"", "素菜":"", "主食汤":"" };
+
+function byId(id){ for(var i=0;i<DISHES.length;i++){ if(DISHES[i].id===id) return DISHES[i]; } return null; }
+function cartCount(){ var n=0; state.cart.forEach(function(i){n+=i.qty;}); return n; }
+function moneyFree(){ return ""; }
+
+/* =========================================================
+   路由
+   ========================================================= */
+var ROUTES=["home","dish","cart","orders","settings","ticket"];
+function go(hash){ location.hash = hash; }
+function parseHash(){
+  var h=(location.hash||"#home").replace(/^#/,"");
+  var parts=h.split("/");
+  var route=parts[0]||"home";
+  if(ROUTES.indexOf(route)<0) route="home";
+  return {route:route, arg:parts[1]||""};
+}
+function render(){
+  var r=parseHash();
+  ROUTES.forEach(function(name){
+    var el=document.getElementById("view-"+name);
+    if(el) el.classList.toggle("on", name===r.route);
+  });
+  if(r.route==="home"){ renderHome(); }
+  if(r.route==="dish") renderDish(r.arg);
+  if(r.route==="cart") renderCart();
+  if(r.route==="orders"){ state.newCount=0; renderOrders(); }
+  if(r.route==="settings") renderSettings();
+  if(r.route==="ticket") renderTicket();
+  renderNav(r.route);
+  renderFab(r.route);
+  window.scrollTo(0,0);
+}
+
+/* =========================================================
+   导航
+   ========================================================= */
+function icon(name){
+  var p={
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    cart:'<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M3 4h2l2.6 10.4A2 2 0 0 0 9.6 16H18a2 2 0 0 0 1.9-1.5L21.5 8H6"/>',
+    list:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+    gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>',
+    back:'<path d="M15 5 8 12l7 7"/>',
+    search:'<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    x:'<path d="M6 6l12 12M18 6l-12 12"/>'
+  }[name]||"";
+  return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>';
+}
+var TABS=[
+  {r:"home",label:"菜单",ic:"menu"},
+  {r:"cart",label:"购物车",ic:"cart"},
+  {r:"orders",label:"记录",ic:"list"},
+  {r:"settings",label:"设置",ic:"gear"}
+];
+function renderNav(route){
+  var tn=document.getElementById("topnav");
+  var tb=document.getElementById("tabbar");
+  var cnt=cartCount();
+  function badge(r){
+    if(r==="cart"&&cnt) return '<span class="badge">'+cnt+'</span>';
+    if(r==="orders"&&state.newCount) return '<span class="badge badge-new">'+state.newCount+'</span>';
+    return "";
+  }
+  tn.innerHTML=TABS.map(function(t){
+    var on=(t.r===route)||(route==="dish"&&t.r==="home")||(route==="ticket"&&t.r==="cart");
+    return '<a href="#'+t.r+'" class="'+(on?"on":"")+'">'+t.label+badge(t.r)+'</a>';
+  }).join("");
+  tb.innerHTML=TABS.map(function(t){
+    var on=(t.r===route)||(route==="dish"&&t.r==="home")||(route==="ticket"&&t.r==="cart");
+    return '<a href="#'+t.r+'" class="'+(on?"on":"")+'">'+icon(t.ic)+'<span>'+t.label+'</span>'+badge(t.r)+'</a>';
+  }).join("");
+}
+function renderFab(route){
+  var fab=document.getElementById("fabbar");
+  var cnt=cartCount();
+  if(route==="home" && cnt>0){
+    document.getElementById("fab-sum").innerHTML="已选 <em>"+state.cart.length+"</em> 道菜 · 共 "+cnt+" 份";
+    fab.classList.add("on");
+  }else{ fab.classList.remove("on"); }
+}
+
+/* =========================================================
+   视图：菜单
+   ========================================================= */
+function renderHome(){
+  var catsEl=document.getElementById("cats");
+  catsEl.innerHTML=CATS.map(function(c){
+    var n = c==="全部"? DISHES.length : DISHES.filter(function(d){return d.cat===c;}).length;
+    return '<button class="cat '+(state.cat===c?"on":"")+'" data-cat="'+c+'">'+c+(c==="全部"?"":" "+n)+'</button>';
+  }).join("");
+  Array.prototype.forEach.call(catsEl.querySelectorAll(".cat"),function(b){
+    b.addEventListener("click",function(){ state.cat=b.getAttribute("data-cat"); renderHome(); });
+  });
+
+  var q=state.q.trim();
+  var list=DISHES.filter(function(d){
+    var okCat = state.cat==="全部" || d.cat===state.cat;
+    var okQ = !q || (d.n+d.ing.join("")+d.sea.join("")+d.src+d.intro).indexOf(q)>-1;
+    return okCat && okQ;
+  });
+  var grid=document.getElementById("grid");
+  if(!list.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1"><h3>没有找到这道菜</h3><p>换个词试试，比如“鱼”“牛”“豆腐”。</p></div>';
+  }else{
+    grid.innerHTML=list.map(function(d){
+      var inCart=state.cart.filter(function(i){return i.id===d.id;}).reduce(function(a,i){return a+i.qty;},0);
+      return '<div class="dish" role="button" tabindex="0" data-id="'+d.id+'">'+
+        '<div class="plate"><img src="'+d.img+'" alt="'+d.n+'" loading="lazy">'+
+        (inCart?'<span class="qty">'+inCart+'</span>':'')+'</div>'+
+        '<div class="dish-name">'+d.n+'</div>'+
+        '<div class="dish-meta">'+
+          '<span>'+d.t+'</span>'+
+          (d.sp? '<span class="dot"></span><span class="spicy-fire">'+fireSvg()+'辣</span>' : '')+
+        '</div>'+
+      '</div>';
+    }).join("");
+    Array.prototype.forEach.call(grid.querySelectorAll(".dish"),function(b){
+      function open(){
+        var dd=byId(b.getAttribute("data-id"));
+        state.draft={spicy: dd.kind==="drink"? "常温" : (dd.sp? "微辣":"不辣"), note:""};
+        go("dish/"+b.getAttribute("data-id"));
+      }
+      b.addEventListener("click",open);
+      b.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } });
+    });
+  }
+  var dishN=DISHES.filter(function(d){return d.kind!=="drink";}).length;
+  var drinkN=DISHES.length-dishN;
+  document.getElementById("lead-sub").textContent="今天准备了 "+dishN+" 道菜"+(drinkN? "、"+(drinkN)+" 款甜品饮品":"")+"，慢慢挑，想吃的都点上";
+  var hh=new Date().getHours();
+  var hello = hh<5? "夜深了" : hh<11? "早上好" : hh<14? "中午好" : hh<18? "下午好" : hh<22? "晚上好" : "夜里了，还饿吗";
+  var helloEl=document.getElementById("lead-hello");
+  if(helloEl) helloEl.textContent=hello;
+}
+function fireSvg(){ return '<svg viewBox="0 0 24 24"><path d="M12 2c1 4-1 5 1 8 1.5-2 1-4 2.5-5 2 3 4 5 4 8a7.5 7.5 0 0 1-15 0c0-3 2-4 3-6 .5 2 1 3 1.5 3 2-2 1-5 2-8Z"/></svg>'; }
+
+/* =========================================================
+   视图：菜品详情
+   ========================================================= */
+function renderDish(id){
+  var d=byId(id); var el=document.getElementById("view-dish");
+  if(!d){ el.innerHTML='<div class="empty"><h3>这道菜不在菜单里</h3><p><a href="#home">回菜单看看</a></p></div>'; return; }
+  var inCart=state.cart.filter(function(i){return i.id===d.id;}).reduce(function(a,i){return a+i.qty;},0);
+  var isDrink = d.kind==="drink";
+  var optList = isDrink? ["常温","冰","热"] : SPICY_OPT;
+  var optName = isDrink? "温度" : "辣度";
+  var optSel = isDrink
+    ? ((state.draft.spicy==="冰"||state.draft.spicy==="热")? state.draft.spicy : "常温")
+    : state.draft.spicy;
+  el.innerHTML =
+   '<div class="page-h"><button class="back" id="d-back">'+icon("back")+'</button>'+
+     '<h2>菜谱</h2></div>'+
+   '<div class="sheet">'+
+     '<div class="sheet-hero">'+
+        '<div class="plate"><img src="'+d.img+'" alt="'+d.n+'"></div>'+
+        '<div><h2>'+d.n+'</h2>'+
+          '<div class="sub">'+d.intro+'</div>'+
+          '<div class="sub" style="margin-top:8px;color:var(--ink-3)">'+d.cat+'</div>'+
+        '</div>'+
+     '</div>'+
+     '<div class="pad">'+
+       '<div class="receipt"><div class="receipt-3">'+
+         '<div><div class="k">锅具</div><div class="v">'+d.pot+'</div></div>'+
+         '<div><div class="k">火候</div><div class="v">'+d.fire+'</div></div>'+
+         '<div><div class="k">时长</div><div class="v">'+d.t+' · '+d.lv+'</div></div>'+
+       '</div></div>'+
+       '<div class="section-t">主料</div><div class="chips">'+d.ing.map(function(x){return '<span class="chip">'+x+'</span>';}).join("")+'</div>'+
+       '<div class="section-t">调料</div><div class="chips">'+d.sea.map(function(x){return '<span class="chip sea">'+x+'</span>';}).join("")+'</div>'+
+       '<div class="section-t">做法</div>'+
+       '<ol class="steps">'+d.steps.map(function(s){return '<li>'+s+'</li>';}).join("")+'</ol>'+
+       '<div class="section-t">点菜设置</div>'+
+       '<div class="opt-row"><span class="opt-label">'+optName+'</span>'+
+         '<div class="seg" id="seg-spicy">'+optList.map(function(o){
+            return '<button data-sp="'+o+'" data-fire="'+(o==="不辣"||o==="常温"?0:1)+'" class="'+(optSel===o?"on":"")+'">'+o+'</button>';
+          }).join("")+'</div></div>'+
+       '<div class="opt-row"><span class="opt-label">备注</span></div>'+
+       '<textarea class="note" id="d-note" placeholder="比如：少油、不要香菜、给小孩留一份不辣的、多放蒜">'+state.draft.note+'</textarea>'+
+     '</div>'+
+     '<div class="actionbar">'+
+       (inCart? '<span style="font-size:12.5px;color:var(--ink-3)">已在购物车 '+inCart+' 份</span>':'')+
+       '<button class="btn btn-primary grow" id="d-add">'+icon("plus")+' 加入购物车</button>'+
+     '</div>'+
+   '</div>';
+  document.getElementById("d-back").addEventListener("click",function(){ history.length>1? history.back() : go("home"); });
+  Array.prototype.forEach.call(document.querySelectorAll("#seg-spicy button"),function(b){
+    b.addEventListener("click",function(){
+      state.draft.spicy=b.getAttribute("data-sp");
+      Array.prototype.forEach.call(document.querySelectorAll("#seg-spicy button"),function(x){x.classList.toggle("on",x===b);});
+    });
+  });
+  document.getElementById("d-note").addEventListener("input",function(e){ state.draft.note=e.target.value; });
+  document.getElementById("d-add").addEventListener("click",function(){
+    addToCart(d.id, state.draft.spicy, state.draft.note.trim());
+    toast("已加入 · "+d.n+"（"+state.draft.spicy+"）");
+    go("home");
+  });
+}
+
+function addToCart(id,spicy,note){
+  var found=state.cart.filter(function(i){return i.id===id && i.spicy===spicy;}).
+    map(function(i){return i;}); 
+  var target=null;
+  for(var k=0;k<state.cart.length;k++){
+    if(state.cart[k].id===id && state.cart[k].spicy===spicy){ target=state.cart[k]; break; }
+  }
+  if(target){ target.qty+=1; if(note) target.note=note; }
+  else state.cart.push({id:id,qty:1,spicy:spicy,note:note||""});
+  saveCart();
+}
+
+/* =========================================================
+   视图：购物车
+   ========================================================= */
+function renderCart(){
+  var el=document.getElementById("view-cart");
+  var cnt=cartCount();
+  var body;
+  if(!state.cart.length){
+    body='<div class="empty"><h3>购物车还是空的</h3><p>去菜单挑几道吧，挑好了我这儿直接开火。</p>'+
+      '<p style="margin-top:14px"><button class="btn btn-enamel btn-sm" id="c-empty-go">看看菜单</button></p></div>';
+  }else{
+    body='<div class="cart-list">'+state.cart.map(function(i,idx){
+      var d=byId(i.id);
+      return '<div class="cart-item">'+
+        '<div class="plate"><img src="'+d.img+'" alt=""></div>'+
+        '<div class="info"><h4>'+d.n+'</h4>'+
+          '<div class="meta"><b>'+i.spicy+'</b> · '+d.t+(i.note? ' · 备注：'+i.note : '')+'</div></div>'+
+        '<div class="stepper"><button data-act="minus" data-i="'+idx+'">−</button><span>'+i.qty+'</span>'+
+          '<button data-act="plus" data-i="'+idx+'">+</button></div>'+
+        '<button class="back" data-act="del" data-i="'+idx+'" aria-label="移除" style="width:32px;height:32px">'+icon("x")+'</button>'+
+      '</div>';
+    }).join("")+'</div>'+
+    '<div class="form-card">'+
+      '<div class="field"><label>谁在点菜</label><input id="c-name" value="'+esc(state.cfg.name)+'" placeholder="写个名字，后厨好知道" maxlength="12"></div>'+
+      '<div class="field"><label>什么时候吃</label><div class="timechips" id="c-meal">'+
+        ["现在","今天晚饭","明天午饭"].map(function(m){
+          return '<button data-m="'+m+'" class="'+(state.cfg.meal===m?"on":"")+'">'+m+'</button>';
+        }).join("")+'</div></div>'+
+      '<div class="field" style="margin-bottom:0"><label>整单备注</label>'+
+        '<textarea class="note" id="c-note" placeholder="比如：家里有客人 6 个人吃、少做主食、有人不吃辣">'+esc(state.cfg.lastNote||"")+'</textarea></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;align-items:center;margin:6px 0 8px;color:var(--ink-3);font-size:12.5px">'+
+      '<span>共 '+cnt+' 份 / '+state.cart.length+' 道菜</span>'+
+      '<span style="flex:1"></span>'+
+      '<a href="#home" style="color:var(--enamel);text-decoration:none">继续点菜</a>'+
+    '</div>'+
+    '<div class="actionbar" style="position:static;background:none;border:0;padding:0 0 8px">'+
+      '<button class="btn btn-primary grow" id="c-submit">确认下单</button></div>'+
+    '<p class="hint" id="c-push-hint"></p>';
+  }
+  el.innerHTML='<div class="page-h"><button class="back" id="c-back">'+icon("back")+'</button><h2>购物车</h2></div>'+body;
+
+  var backBtn=document.getElementById("c-back"); if(backBtn) backBtn.addEventListener("click",function(){ go("home"); });
+  var eg=document.getElementById("c-empty-go"); if(eg) eg.addEventListener("click",function(){ go("home"); });
+  Array.prototype.forEach.call(document.querySelectorAll(".cart-item [data-act]"),function(b){
+    b.addEventListener("click",function(){
+      var idx=+b.getAttribute("data-i"), act=b.getAttribute("data-act");
+      if(act==="plus") state.cart[idx].qty+=1;
+      if(act==="minus"){ state.cart[idx].qty-=1; if(state.cart[idx].qty<=0) state.cart.splice(idx,1); }
+      if(act==="del") state.cart.splice(idx,1);
+      saveCart(); renderCart();
+    });
+  });
+  var nameEl=document.getElementById("c-name");
+  if(nameEl) nameEl.addEventListener("input",function(e){ state.cfg.name=e.target.value; saveCfg(); });
+  var mealEl=document.getElementById("c-meal");
+  Array.prototype.forEach.call(mealEl.querySelectorAll("button"),function(b){
+    b.addEventListener("click",function(){
+      state.cfg.meal=b.getAttribute("data-m"); saveCfg(); renderCart();
+    });
+  });
+  var pushHint=document.getElementById("c-push-hint");
+  if(pushHint){
+    pushHint.innerHTML = state.cfg.topic
+      ? '下单后会推送到你手机的提醒口令：<b>'+esc(state.cfg.topic)+'</b>（可在设置里改）'
+      : '还没开启手机提醒。<a href="#settings" style="color:var(--enamel)">去设置里填一个口令</a>，下单就能收到通知。';
+  }
+  var submitBtn=document.getElementById("c-submit");
+  if(submitBtn) submitBtn.addEventListener("click",function(){ submitOrder(); });
+}
+
+/* =========================================================
+   下单
+   ========================================================= */
+function pad(n){ return n<10? "0"+n : ""+n; }
+function nowStr(){
+  var d=new Date();
+  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+" "+pad(d.getHours())+":"+pad(d.getMinutes());
+}
+function orderCode(){
+  var d=new Date();
+  return String(d.getFullYear()).slice(2)+pad(d.getMonth()+1)+pad(d.getDate())+"-"+pad(d.getHours())+pad(d.getMinutes());
+}
+function submitOrder(){
+  if(!state.cart.length) return;
+  var noteEl=document.getElementById("c-note");
+  var nameEl=document.getElementById("c-name");
+  var who=(nameEl&&nameEl.value.trim())||"家人";
+  var note=(noteEl&&noteEl.value.trim())||"";
+  state.cfg.name=who; state.cfg.lastNote=note; saveCfg();
+
+  var items=state.cart.map(function(i){ var d=byId(i.id); return {id:i.id,n:d.n,qty:i.qty,spicy:i.spicy,note:i.note}; });
+  var order={code:orderCode(),time:nowStr(),ts:Date.now(),who:who,meal:state.cfg.meal,note:note,items:items};
+  state.orders.unshift(order); saveOrders();
+
+  var msg="【"+order.who+"】"+order.meal+" 点了 "+items.length+" 道菜：\n"+
+    items.map(function(it,i){ return (i+1)+". "+it.n+" ×"+it.qty+"（"+it.spicy+"）"+(it.note?"｜"+it.note:""); }).join("\n")+
+    (note? "\n整单备注："+note : "");
+
+  state.cart=[]; saveCart();
+  state.lastPush="";
+  state.lastMsg=msg;
+  if(state.cfg.topic) pushOrder(msg, order);
+  else state.lastPush="未开启提醒：先去设置里填一个家庭口令。";
+  pushStore();
+  go("ticket");
+}
+function pushOrder(msg, order){
+  var payload=msg+"\n---FM---\n"+JSON.stringify({fm:1,o:order});
+  state.lastPush="正在发提醒…";
+  fetch("https://ntfy.sh/",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      topic: state.cfg.topic,
+      title: "家里点菜 · "+(order.who||"家人"),
+      message: payload,
+      priority: 4,
+      tags: ["bell","fork_and_knife"]
+    })
+  }).then(function(r){
+    if(r.ok) return r.json();
+    throw new Error("HTTP "+r.status);
+  }).then(function(){
+    state.lastPush="已发出 ✔ 手机上（装 ntfy 并订阅「"+state.cfg.topic+"」）会响；开着本页的其他设备也会自动收到。";
+    var el=document.querySelector(".push-state"); if(el) el.textContent=state.lastPush;
+    setTimeout(pullOrders,2000);
+  }).catch(function(e){
+    state.lastPush="发提醒失败（"+e.message+"）。订单已存本机，可以点“复制下单内容”发到家人群里。";
+    var el=document.querySelector(".push-state"); if(el) el.textContent=state.lastPush;
+  });
+  setTimeout(function(){
+    var el=document.querySelector(".push-state");
+    if(el) el.textContent=state.lastPush;
+  },0);
+}
+
+/* =========================================================
+   跨设备同步：把 ntfy.sh 当一个极简“公告板”
+   同一口令的设备，谁下单都会推上去；每台开着本页的设备定时拉回来
+   ========================================================= */
+function sortOrders(){
+  state.orders.sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+}
+function syncLabel(){
+  var s=state.sync;
+  if(s.err) return "同步没连上（"+s.err+"）";
+  if(!s.at) return "正在连接…";
+  return "已连接 · "+pad(s.at.getHours())+":"+pad(s.at.getMinutes())+" 刚更新过";
+}
+function paintSync(){
+  ["sync-line","sync-line-2","sync-line-3"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.textContent=syncLabel();
+  });
+}
+function beep(){
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    var ac=new AC();
+    [0,0.22].forEach(function(dt){
+      var o=ac.createOscillator(), g=ac.createGain();
+      o.type="sine"; o.frequency.value=880;
+      g.gain.setValueAtTime(0.0001, ac.currentTime+dt);
+      g.gain.exponentialRampToValueAtTime(0.3, ac.currentTime+dt+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime+dt+0.18);
+      o.connect(g); g.connect(ac.destination);
+      o.start(ac.currentTime+dt); o.stop(ac.currentTime+dt+0.25);
+    });
+    setTimeout(function(){ try{ac.close();}catch(e){} },900);
+  }catch(e){}
+}
+var titleTimer=null;
+function flashTitle(n){
+  var base="家宴点菜";
+  document.title=base;
+  if(titleTimer) return;
+  var on=false;
+  titleTimer=setInterval(function(){
+    on=!on; document.title=(on? "（"+n+" 个新订单）":"")+base;
+  },1000);
+  setTimeout(function(){ clearInterval(titleTimer); titleTimer=null; document.title=base; },12000);
+}
+function alertNew(n){
+  beep(); flashTitle(n);
+  var first=state.orders[0];
+  toast(n+" 个新订单"+(first&&first.who? "："+first.who+" 点了菜":""));
+}
+function pullOrders(){
+  if(!state.cfg.topic) return;
+  var cur=state.cfg.topic;
+  fetch("https://ntfy.sh/"+encodeURIComponent(cur)+"/json?poll=1&since=24h",{cache:"no-store"})
+   .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
+   .then(function(txt){
+     if(cur!==state.cfg.topic) return;
+     var got=0;
+     txt.split("\n").forEach(function(line){
+       line=line.trim(); if(!line) return;
+       var m; try{ m=JSON.parse(line); }catch(e){ return; }
+       if(!m||m.event!=="message"||!m.message) return;
+       var k=m.message.indexOf("---FM---"); if(k<0) return;
+       var p; try{ p=JSON.parse(m.message.slice(k+9).trim()); }catch(e){ return; }
+       if(!p||p.fm!==1||!p.o||!p.o.items) return;
+       var o=p.o; o.rid=m.id; o.remote=true;
+       if(!o.ts) o.ts=(m.time||0)*1000;
+       var dup=state.orders.some(function(x){
+         return (x.rid&&x.rid===o.rid) || (x.code===o.code&&Math.abs((x.ts||0)-(o.ts||0))<600000);
+       });
+       if(dup) return;
+       state.orders.push(o); got++;
+     });
+     state.sync={ok:true,at:new Date(),err:""};
+     if(got){
+       sortOrders(); saveOrders();
+       state.newCount=(state.newCount||0)+got;
+       alertNew(got);
+       var r=parseHash();
+       if(r.route==="orders"){ state.newCount=0; }
+       render();
+     }
+     paintSync();
+   })
+   .catch(function(e){
+     state.sync={ok:false,at:null,err:e.message};
+     paintSync();
+   });
+}
+var syncTimer=null;
+function startSync(){
+  if(syncTimer) clearInterval(syncTimer);
+  pullOrders(); pullStore();
+  syncTimer=setInterval(function(){
+    if(document.hidden) return;
+    pullOrders(); pullStore();
+  },30000);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden){ pullOrders(); pullStore(); } });
+}
+
+/* =========================================================
+   云端账本：长期保存全部历史订单（不受推送服务 12 小时限制）
+   公开测试接口 api.restful-api.dev，一个对象存整份订单列表
+   ========================================================= */
+var STORE_API="https://api.restful-api.dev/objects";
+function storePayload(){
+  return JSON.stringify({fm:1, at:Date.now(), orders:state.orders.slice(0,400)});
+}
+function storeLabel(){
+  if(state.storeMsg) return state.storeMsg;
+  if(!state.cfg.store) return "云端存档还没建立";
+  return "云端存档已连接";
+}
+function paintStore(){
+  ["store-line","store-line-2"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.textContent=storeLabel();
+  });
+}
+function ensureStore(cb){
+  if(state.cfg.store){ cb(state.cfg.store); return; }
+  fetch(STORE_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name:"family-menu-"+state.cfg.topic,data:{payload:storePayload()}})
+  }).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+   .then(function(o){
+     if(!o||!o.id) throw new Error("没有拿到存档编号");
+     state.cfg.store=o.id; saveCfg();
+     state.storeMsg="云端存档已建立"; paintStore();
+     cb(o.id);
+   }).catch(function(e){
+     state.storeMsg="建云端存档失败："+e.message; paintStore();
+   });
+}
+function pushStore(){
+  ensureStore(function(id){
+    fetch(STORE_API+"/"+id,{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name:"family-menu-"+state.cfg.topic,data:{payload:storePayload()}})
+    }).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+     .then(function(){ state.storeMsg="已写入云端存档 · "+state.orders.length+" 条订单"; paintStore(); })
+     .catch(function(e){ state.storeMsg="写入云端存档失败："+e.message; paintStore(); });
+  });
+}
+var storePulling=false;
+function pullStore(){
+  if(!state.cfg.store||storePulling) return;
+  storePulling=true;
+  fetch(STORE_API+"/"+state.cfg.store,{cache:"no-store"})
+   .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+   .then(function(o){
+     storePulling=false;
+     var raw=(o&&o.data&&o.data.payload)||"";
+     var p; try{ p=JSON.parse(raw); }catch(e){ state.storeMsg="云端存档内容异常"; paintStore(); return; }
+     var arr=(p&&p.orders)||[], got=0;
+     arr.forEach(function(ro){
+       if(!ro||!ro.code||!ro.items) return;
+       var dup=state.orders.some(function(x){
+         return x.code===ro.code&&Math.abs((x.ts||0)-(ro.ts||0))<600000;
+       });
+       if(dup) return;
+       ro.remote=true; state.orders.push(ro); got++;
+     });
+     state.storeMsg="云端存档已同步 · 共 "+Math.max(arr.length,state.orders.length)+" 条";
+     paintStore();
+     if(got){
+       sortOrders(); saveOrders();
+       state.newCount=(state.newCount||0)+got;
+       alertNew(got);
+       render();
+     }
+   }).catch(function(e){ storePulling=false; state.storeMsg="读云端存档失败："+e.message; paintStore(); });
+}
+
+/* =========================================================
+   视图：小票
+   ========================================================= */
+function lastOrder(){ return state.orders[0]||null; }
+function renderTicket(payload){
+  var el=document.getElementById("view-ticket");
+  var order=(payload&&payload.order)||lastOrder();
+  if(!order){ el.innerHTML='<div class="empty"><h3>还没有订单</h3><p>去点两道菜吧。</p></div>'; return; }
+  var cnt=order.items.reduce(function(a,i){return a+i.qty;},0);
+  el.innerHTML=
+   '<div class="ticket-wrap">'+
+    '<div class="ticket">'+
+      '<div class="t-head"><div class="stamp">下单了</div><div class="num">NO. '+order.code+'</div></div>'+
+      '<div class="t-body">'+
+        '<div class="t-row"><span>点菜人</span><span>'+esc(order.who)+'</span></div>'+
+        '<div class="t-row"><span>什么时候吃</span><span>'+esc(order.meal)+'</span></div>'+
+        '<div class="t-sep"></div>'+
+        order.items.map(function(it){
+          return '<div class="t-row"><div><span class="n">'+it.n+'</span> <span class="q">'+it.spicy+'</span>'+
+            (it.note? '<div class="t-note">备注：'+esc(it.note)+'</div>':'')+'</div>'+
+            '<span>×'+it.qty+'</span></div>';
+        }).join("")+
+        '<div class="t-sep"></div>'+
+        '<div class="t-row"><span>共</span><span>'+order.items.length+' 道 · '+cnt+' 份</span></div>'+
+        (order.note? '<div class="t-note" style="margin-top:8px">整单备注：'+esc(order.note)+'</div>':'')+
+      '</div>'+
+      '<div class="t-foot"><span>'+order.time+'</span><span>家宴点菜</span></div>'+
+      '<div class="push-state">'+(state.lastPush||"")+'</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">'+
+      '<button class="btn btn-enamel grow" id="t-home">继续点菜</button>'+
+      '<button class="btn btn-ghost" id="t-copy">复制下单内容</button>'+
+      '<button class="btn btn-ghost" id="t-share">发到微信</button>'+
+    '</div>'+
+    '<p class="hint" style="margin-top:14px">家人不在家里、打不开这个页面也没关系：点“发到微信”把这张单子直接发到家庭群，截图也一样。</p>'+
+   '</div>';
+  document.getElementById("t-home").addEventListener("click",function(){ go("home"); });
+  document.getElementById("t-copy").addEventListener("click",function(){
+    copyText(buildMsg(order));
+  });
+  document.getElementById("t-share").addEventListener("click",function(){
+    var txt=buildMsg(order);
+    if(navigator.share){
+      navigator.share({title:"家宴点菜",text:txt}).catch(function(){ copyText(txt); });
+    }else{ copyText(txt); }
+  });
+}
+function buildMsg(order){
+  return "【"+order.who+"】"+order.meal+" 点了 "+order.items.length+" 道菜：\n"+
+    order.items.map(function(it,i){ return (i+1)+". "+it.n+" ×"+it.qty+"（"+it.spicy+"）"+(it.note?"｜"+it.note:""); }).join("\n")+
+    (order.note? "\n整单备注："+order.note:"");
+}
+function copyText(t){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){ toast("已复制，可以粘贴到家庭群"); })
+      .catch(function(){ legacyCopy(t); });
+  }else legacyCopy(t);
+}
+function legacyCopy(t){
+  var ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); toast("已复制，可以粘贴到家庭群"); }catch(e){ toast("复制失败，请手动长按选择"); }
+  document.body.removeChild(ta);
+}
+
+/* =========================================================
+   视图：订单记录
+   ========================================================= */
+function renderOrders(){
+  var el=document.getElementById("view-orders");
+  var head='<div class="page-h"><button class="back" id="o-back">'+icon("back")+'</button><h2>点菜记录</h2>'+
+    '<span style="flex:1"></span>'+
+    (state.orders.length? '<button class="btn btn-ghost btn-sm" id="o-clear">清空</button>':'')+'</div>';
+  if(!state.orders.length){
+    el.innerHTML=head+'<div class="empty"><h3>还没人点菜</h3><p>家人在自己手机上点完，这里会自动出现；本页开着就会响一声。</p></div>'+
+      '<p class="hint" id="sync-line" style="text-align:center">'+syncLabel()+'</p>';
+  }else{
+    el.innerHTML=head+state.orders.map(function(o){
+      return '<div class="order-card">'+
+        '<div class="h"><strong>'+esc(o.who)+' · '+esc(o.meal)+'</strong><time>'+esc(o.time)+'</time></div>'+
+        '<p>'+o.items.map(function(it){return esc(it.n)+'×'+it.qty+'（'+esc(it.spicy)+'）';}).join('、')+'</p>'+
+        (o.note? '<p style="color:var(--ink-3)">整单备注：'+esc(o.note)+'</p>':'')+
+        '<div style="margin-top:2px;font-size:12px;color:var(--ink-3);letter-spacing:.04em">单号 '+esc(o.code)+'</div>'+
+      '</div>';
+    }).join("")+
+      '<div style="display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap">'+
+        '<button class="btn btn-ghost btn-sm" id="o-refresh">立即刷新</button>'+
+        '<span class="hint" id="sync-line-2" style="margin:0">'+syncLabel()+'</span>'+
+      '</div>'+
+      '<p class="hint" id="store-line-2" style="margin-top:6px">'+storeLabel()+'</p>'+
+      '<p class="hint" style="margin-top:8px">用同一家庭口令、同一云端存档的设备，谁下单都会汇到这里，历史长期保留。</p>';
+  }
+  var b=document.getElementById("o-back"); if(b) b.addEventListener("click",function(){ go("home"); });
+  var rf=document.getElementById("o-refresh"); if(rf) rf.addEventListener("click",function(){ pullOrders(); });
+  var c=document.getElementById("o-clear");
+  if(c) c.addEventListener("click",function(){
+    if(confirm("确定清空本机的点菜记录？小票会一起消失。")){ state.orders=[]; saveOrders(); renderOrders(); toast("已清空"); }
+  });
+}
+
+/* =========================================================
+   视图：设置
+   ========================================================= */
+function renderSettings(){
+  var el=document.getElementById("view-settings");
+  el.innerHTML=
+   '<div class="page-h"><button class="back" id="s-back">'+icon("back")+'</button><h2>设置</h2></div>'+
+   '<div class="form-card">'+
+     '<div class="field"><label>我的名字（下单时会带上）</label><input id="s-name" value="'+esc(state.cfg.name)+'" maxlength="12"></div>'+
+     '<div class="field" style="margin-bottom:0"><label>家庭口令（所有设备必须一样）</label>'+
+       '<div class="row2"><input id="s-topic" value="'+esc(state.cfg.topic)+'" placeholder="比如 jiachang-8f3k2m">'+
+       '<button class="btn btn-ghost" id="s-copy">复制口令</button></div>'+
+       '<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">'+
+         '<button class="btn btn-enamel btn-sm" id="s-save">保存并生效</button>'+
+         '<button class="btn btn-ghost btn-sm" id="s-invite">复制邀请链接</button>'+
+         '<button class="btn btn-ghost btn-sm" id="s-gen">换一个随机口令</button>'+
+       '</div>'+
+       '<p class="hint" style="margin-top:10px">口令不同 = 收不到别人点的菜。把“邀请链接”发给家人，他们打开就自动用上同一个口令。</p>'+
+     '</div>'+
+   '<div class="form-card">'+
+     '<div class="section-t" style="margin-top:0">家人怎么用、你怎么收到</div>'+
+     '<p class="hint" style="margin-bottom:10px">同步状态：<span id="sync-line-3">'+syncLabel()+'</span>。开着这个页面时，每 30 秒自动拉一次，有人下单会响铃、标题闪。</p>'+
+     '<ol class="steps-mini">'+
+       '<li><b>手机能打开这个页面</b>：在电脑上双击 <b>启动局域网服务.bat</b>，会显示一个 http://192.168.x.x:8080 的地址，手机连同一个 WiFi 用浏览器打开它（电脑别关机）。</li>'+
+       '<li><b>口令对齐</b>：你在这页点“复制邀请链接”发到家人微信，他们用手机打开这个链接即可（链接里带着口令）。</li>'+
+       '<li><b>要手机弹通知</b>：装 <b>ntfy</b>（应用商店搜 ntfy），订阅同一个家庭口令，之后不用开页面也能收到。</li>'+
+       '<li>点下面“发一条测试”，手机或其它设备应该立刻有反应，用来验证整条链路。</li>'+
+     '</ol>'+
+     '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">'+
+       '<button class="btn btn-enamel btn-sm" id="s-test">发一条测试</button>'+
+       '<button class="btn btn-ghost btn-sm" id="s-pull">立即同步订单</button>'+
+     '</div>'+
+   '</div>'+
+   '<div class="form-card">'+
+     '<div class="section-t" style="margin-top:0">云端存档（全部历史订单）</div>'+
+     '<p class="hint">订单不只靠 12 小时的推送缓存：每次下单都会写进一份云端存档，之后不管换哪台设备、哪个网络，打开“记录”都会把历史整份拉下来。</p>'+
+     '<p class="hint" style="margin-top:8px">状态：<span id="store-line">'+storeLabel()+'</span>'+
+       (state.cfg.store? '　存档号 <span style="word-break:break-all">'+esc(state.cfg.store)+'</span>':'')+'</p>'+
+     '<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'+
+       '<button class="btn btn-enamel btn-sm" id="s-store-pull">立即同步存档</button>'+
+       '<button class="btn btn-ghost btn-sm" id="s-store-push">把本机订单写回存档</button>'+
+     '</div>'+
+   '</div>'+
+   '<div class="form-card">'+
+     '<div class="section-t" style="margin-top:0">说明</div>'+
+     '<p class="hint">菜单里的菜谱参考老饭骨、隋坡等公开作品整理，锅具、火候、时间按家用灶具改写；成品图为示意。'+
+     '订单会以一段文字（含家庭口令）经过 ntfy.sh 这个公开推送服务，口令起得越随机越安全；菜品和设置本身不上传。</p>'+
+   '</div>'+
+   '<p class="hint" style="text-align:center;margin-top:18px">家宴点菜 · 想吃什么，自己勾</p>';
+  document.getElementById("s-back").addEventListener("click",function(){ go("home"); });
+  var nameEl=document.getElementById("s-name"), topicEl=document.getElementById("s-topic");
+  nameEl.addEventListener("input",function(e){ state.cfg.name=e.target.value||"我"; saveCfg(); });
+  topicEl.addEventListener("input",function(e){ state.cfg.topic=e.target.value.trim(); saveCfg(); });
+  function commitTopic(t){
+    t=String(t||"").trim(); if(!t){ toast("口令不能是空的"); return; }
+    state.cfg.topic=t; saveCfg();
+    startSync(); pullOrders();
+    toast("已用上口令："+t);
+  }
+  document.getElementById("s-save").addEventListener("click",function(){ commitTopic(topicEl.value); });
+  document.getElementById("s-copy").addEventListener("click",function(){
+    copyText(state.cfg.topic); toast("口令已复制，发给家人就行");
+  });
+  document.getElementById("s-invite").addEventListener("click",function(){
+    function makeInvite(id){
+      var base=location.href.split("#")[0];
+      copyText(base+"#join-"+encodeURIComponent(state.cfg.topic+"|"+(id||"")));
+      toast("邀请链接已复制：家人打开就同口令、同云端存档");
+    }
+    if(state.cfg.store){ makeInvite(state.cfg.store); }
+    else{ ensureStore(function(id){ makeInvite(id); }); }
+  });
+  document.getElementById("s-gen").addEventListener("click",function(){
+    var t="jiachang-"+Math.random().toString(36).slice(2,8)+Math.random().toString(36).slice(2,5);
+    topicEl.value=t; commitTopic(t);
+  });
+  document.getElementById("s-pull").addEventListener("click",function(){ pullOrders(); pullStore(); toast("正在拉取最新订单"); });
+  document.getElementById("s-store-pull").addEventListener("click",function(){ if(!state.cfg.store){ ensureStore(function(){}); } pullStore(); toast("正在读云端存档"); });
+  document.getElementById("s-store-push").addEventListener("click",function(){ pushStore(); toast("正在写入云端存档"); });
+  document.getElementById("s-test").addEventListener("click",function(){
+    if(!state.cfg.topic){ toast("先填一个家庭口令"); return; }
+    var t=state.cfg.topic;
+    fetch("https://ntfy.sh/",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({topic:t,title:"家宴点菜 · 测试",message:"如果你看到这条，说明口令「"+t+"」这条路是通的。",priority:4,tags:["bell"]})
+    }).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); toast("测试消息已发出，手机该响了"); setTimeout(pullOrders,1500); })
+      .catch(function(e){ toast("没发出去："+e.message+"，检查网络或口令"); });
+  });
+  
+}
+
+/* =========================================================
+   工具
+   ========================================================= */
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+var toastTimer=null;
+function toast(msg){
+  var el=document.getElementById("toast");
+  el.textContent=msg; el.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ el.classList.remove("on"); },2200);
+}
+
+/* =========================================================
+   启动
+   ========================================================= */
+load();
+(function joinByLink(){
+  var h=location.hash||"";
+  if(h.indexOf("#join-")===0){
+    var raw=decodeURIComponent(h.slice(6));
+    location.hash="#home";
+    var parts=raw.split("|");
+    if(parts[0]) state.cfg.topic=parts[0];
+    if(parts[1]) state.cfg.store=parts[1];
+    saveCfg();
+    setTimeout(function(){
+      toast("已加入这个家的菜单：口令 "+state.cfg.topic);
+      startSync();
+    },80);
+  }
+})();
+document.getElementById("q").addEventListener("input",function(e){
+  state.q=e.target.value; renderHome();
+});
+document.getElementById("fab-go").addEventListener("click",function(){ go("cart"); });
+window.addEventListener("hashchange",render);
+render();
+startSync();
+</script>
+</body>
+</html>
+
