@@ -980,9 +980,10 @@ var DISHES = [
    ========================================================= */
 var CART_KEY="fm_cart_v1", ORDER_KEY="fm_orders_v1", CFG_KEY="fm_cfg_v1";
 var DEFAULT_TOPIC="jia-yan-r4t7w2m9";
+var DEFAULT_STORE="ff808181a09d98f701a211dddc30467d";
 var state = {
   cat:"全部", q:"",
-  cart:[], orders:[], cfg:{name:"我", topic:DEFAULT_TOPIC, store:"", meal:"今天晚饭"},
+  cart:[], orders:[], cfg:{name:"我", topic:DEFAULT_TOPIC, store:DEFAULT_STORE, meal:"今天晚饭"},
   draft:{spicy:"微辣", note:""},
   lastPush:"",
   newCount:0, sync:{ok:null, at:null, err:""}, storeMsg:""
@@ -993,7 +994,7 @@ function load(){
     var o=JSON.parse(localStorage.getItem(ORDER_KEY)||"[]"); if(Array.isArray(o)) state.orders=o;
     var g=JSON.parse(localStorage.getItem(CFG_KEY)||"{}"); if(g&&typeof g==="object"){state.cfg=Object.assign(state.cfg,g);}
     if(!state.cfg.topic) state.cfg.topic=DEFAULT_TOPIC;
-    if(!state.cfg.store) state.cfg.store="";
+    if(!state.cfg.store) state.cfg.store=DEFAULT_STORE;
     sortOrders();
   }catch(e){}
 }
